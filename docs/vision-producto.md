@@ -16,8 +16,12 @@ La Racha convierte esa costumbre en una experiencia más visual, gamificada y em
 
 - **Racha semanal:** el grupo mantiene una racha cuando consigue quedar cada semana con al menos 3 personas.
 - **Planes y asistencia:** cada quedada queda registrada con fecha, squad, lugar, tipo de plan y otros detalles.
-- **Momentos e highlights:** los miembros pueden proponer y votar la mejor parte de una quedada.
+- **Momentos e highlights:** las membresías del grupo pueden proponer y votar la mejor parte de una quedada.
 - **Insignias:** logros desbloqueables por hitos de constancia, asistencia o momentos especiales.
+- **Álbum de fotos:** cada grupo puede conservar fotos de sus quedadas y recuerdos.
+- **Trofeos de membresías:** cada persona puede conseguir logros personales dentro de cada grupo al que pertenece.
+- **Cartas coleccionables:** recuerdos o hitos convertidos en cartas visuales coleccionables.
+- **Calendario compartido:** herramienta para marcar disponibilidad y ver cuándo coincide el grupo para quedar.
 - **Estadísticas:** resumen del grupo con datos como asistencia, frecuencia, planes favoritos y recuerdos destacados.
 - **Capa social futura:** usuarios y grupos podrán compartir contenido concreto si quieren, sin romper la privacidad del grupo.
 
@@ -42,7 +46,7 @@ Esta capa social queda fuera del MVP inicial.
 La primera versión se centrará en una experiencia pequeña pero funcional:
 
 - Crear un grupo.
-- Añadir miembros.
+- Añadir membresías o miembros internos del grupo.
 - Registrar una quedada.
 - Marcar quién asistió.
 - Guardar detalles básicos de la quedada.
@@ -51,6 +55,17 @@ La primera versión se centrará en una experiencia pequeña pero funcional:
 - Desbloquear insignias simples.
 
 Todo lo demás vendrá después.
+
+## Módulos Futuros
+
+Además del MVP, La Racha podrá crecer con varios módulos:
+
+- **Álbum de grupo:** galería privada con fotos de quedadas, highlights y recuerdos.
+- **Trofeos personales:** logros conseguidos por membresías concretas.
+- **Cartas coleccionables:** piezas visuales generadas a partir de momentos, hitos, personas o planes especiales.
+- **Calendario compartido:** cada membresía marca cuándo está libre u ocupada, la app detecta coincidencias y el administrador puede añadir quedadas acordadas al calendario.
+- **Museo o salón de la fama:** espacio para trofeos, insignias, récords y recuerdos destacados.
+- **Wrapped anual:** resumen visual con estadísticas y momentos memorables del grupo.
 
 ## Documentación Relacionada
 
