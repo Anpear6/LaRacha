@@ -47,6 +47,8 @@ Reglas de la visión social:
 - Un usuario puede seguir a varios grupos.
 - Un grupo no puede seguir a usuarios ni a otros grupos.
 - Un grupo es privado por defecto.
+- En la versión futura, seguir a un grupo podrá ser `abierto` o `por_solicitud`.
+- Aunque un grupo pueda recibir seguidores, su información interna seguirá siendo privada.
 - Un grupo puede decidir compartir contenido concreto: fotos, logros, highlights, estadísticas o hitos.
 - Un usuario que sigue a otro usuario podrá ver a qué grupos pertenece ese usuario y el contenido público que esos grupos compartan.
 - Un usuario que sigue a un grupo podrá ver el contenido público compartido por ese grupo.
@@ -59,18 +61,24 @@ El MVP debe permitir que un grupo pueda registrar su actividad básica sin depen
 
 Incluye:
 
+- Crear usuarios reales.
+- Permitir que un usuario borre su propia cuenta.
+- Traspasar automáticamente el rol admin al miembro activo más antiguo si el admin borra su cuenta.
+- Conservar el histórico de membresías, quedadas y asistencias cuando un usuario borra su cuenta.
 - Crear un grupo.
-- Asignar como administrador al usuario o miembro que crea el grupo.
-- Crear miembros dentro del grupo.
+- Asignar como administrador a la membresía del usuario que crea el grupo.
+- Crear membresías dentro del grupo, incluyendo miembros internos sin cuenta si hace falta.
+- Eliminar membresías de un grupo sin borrar su histórico.
 - Registrar una quedada.
 - Marcar asistentes.
 - Guardar detalles importantes de la quedada.
-- Configurar una frecuencia básica de racha para el grupo.
+- Configurar una frecuencia básica de racha al crear el grupo.
 - Calcular si la quedada cuenta para la racha elegida.
 - Mostrar la racha actual.
 - Mostrar un historial de quedadas.
-- Subir o asociar una foto a una quedada, si técnicamente no bloquea demasiado.
-- Mostrar insignias iniciales.
+- Subir o asociar varias fotos a una quedada.
+- Registrar notas libres de una quedada.
+- Mostrar el salón de la fama inicial con insignias de racha bloqueadas y desbloqueadas.
 
 No incluye todavía:
 
@@ -91,36 +99,67 @@ Una quedada podrá registrar:
 
 - Título.
 - Fecha.
-- Squad: miembros que asistieron.
+- Squad: membresías que asistieron.
 - Conductor.
 - Tipo de plan.
 - Momento del día.
 - Lugar.
 - Comida.
 - Duración.
-- Objetos perdidos: cosas que alguien se dejó en casa, en el coche o en otro sitio.
-- Foto relacionada.
+- Objetos perdidos: personas del grupo que se dejaron algo en casa, en el coche o en otro sitio.
+- Fotos relacionadas.
+- Notas.
 
 Para el MVP, algunos campos pueden ser opcionales o simplificados.
 
 ## 8. Highlights
 
-Después de una quedada, los miembros pueden proponer cuál fue la mejor parte del plan.
+Después de una quedada, las membresías pueden proponer cuál fue la mejor parte del plan.
 
 Funcionamiento deseado:
 
-- Cada miembro puede sugerir uno o varios highlights.
+- Cada membresía puede sugerir uno o varios highlights.
 - Un highlight puede tener texto y foto.
-- Los miembros pueden votar.
+- Las membresías pueden votar.
 - El highlight con más votos queda marcado como highlight principal de la quedada.
 
 Esta funcionalidad es importante para la identidad del producto, pero puede entrar después de la primera demo si retrasa demasiado el MVP.
+
+## 8.1 Salón De La Fama
+
+La app tendrá dos formas de entender el salón de la fama:
+
+- **Salón de la fama del grupo:** muestra los logros y recuerdos de un grupo concreto.
+- **Salón de la fama personal:** resume los logros que un usuario ha conseguido a través de los grupos a los que pertenece.
+
+En el MVP, el salón de la fama estará centrado en insignias de racha.
+
+Funcionamiento del salón de la fama del grupo:
+
+- Muestra el catálogo de insignias de racha.
+- Las insignias no desbloqueadas aparecen apagadas, sombreadas o en blanco y negro.
+- Las insignias desbloqueadas por ese grupo aparecen en color.
+- En el futuro, este espacio también podrá incluir highlights y álbum de fotos del grupo.
+- No incluirá trofeos personales, porque los trofeos se adjudican a membresías/personas.
+
+Funcionamiento del salón de la fama personal:
+
+- Un usuario puede pertenecer a varios grupos.
+- Por eso puede haber conseguido la misma insignia en varios grupos distintos.
+- En el salón personal, cada insignia se mostrará asociada al primer grupo con el que ese usuario la consiguió.
+- En el futuro, este salón personal también podrá incluir trofeos personales y cartas coleccionables relacionadas con sus grupos.
+
+Puntos de expansión:
+
+- Aunque álbum, calendario, highlights, trofeos y cartas no estén implementados al principio, la interfaz podrá mostrar accesos visibles a esas secciones.
+- Si una sección todavía no existe, se mostrará un estado de "Próximamente", por ejemplo: "Próximamente: Calendario".
+- Estos accesos sirven para que el producto ya tenga forma de app completa, aunque algunas funcionalidades lleguen después.
 
 ## 9. Reglas Iniciales De La Racha
 
 La racha no debe ser una regla única para todos los grupos. La idea inicial de "una quedada por semana" funciona para grupos jóvenes con mucha disponibilidad, pero puede ser demasiado rígida para personas con trabajos, hijos, vacaciones o agendas complicadas.
 
-Cada grupo podrá tener una configuración de racha elegida por el administrador.
+Cada grupo tendrá una configuración de racha elegida por el administrador al crear el grupo. En el MVP no se podrá modificar después para que las reglas del juego no cambien a conveniencia.
 
 Opciones posibles:
 
@@ -147,13 +186,17 @@ Para que la app no castigue dinámicas normales de vacaciones, puede existir una
 
 Idea inicial:
 
-- Durante un rango de tres meses de verano, el grupo no pierde la racha si consigue verse al menos dos veces.
+- La tregua se podrá activar entre el 1 de junio y el 31 de agosto.
+- Solo el administrador podrá activarla.
+- Si una persona administra varios grupos, podrá elegir en cuáles activa la tregua.
+- Durante ese rango fijo de verano, el grupo no pierde la racha si consigue verse al menos dos veces.
 - La tregua mantiene viva la racha, pero no necesariamente la aumenta al mismo ritmo.
-- El administrador puede activar o desactivar esta regla para su grupo.
+- La tregua se desactiva automáticamente el 31 de agosto.
+- Durante la última semana de agosto, la app avisará de que la tregua está a punto de terminar.
 
 ### Recuperación De Racha
 
-Si un grupo pierde la racha, puede existir una mecánica de recuperación.
+Si un grupo pierde la racha, existirá una mecánica de recuperación desde el MVP.
 
 Idea inicial:
 
@@ -161,6 +204,8 @@ Idea inicial:
 - Ejemplo: si se pierde una racha de 3 semanas, el grupo debe quedar 3 semanas seguidas para recuperarla.
 - Las semanas usadas para recuperar la racha no suman como nueva racha.
 - En el ejemplo anterior, después de 3 semanas de recuperación, el grupo recuperaría su racha de 3 semanas, no pasaría a tener 6.
+- La recuperación se guardará como entidad propia para poder mostrar progreso y calcular estadísticas históricas.
+- Esta información permitirá saber cuántas veces se perdió la racha, cuántas recuperaciones se completaron y cuánto tiempo se invirtió recuperando.
 
 Estas reglas son provisionales y se podrán ajustar cuando se pruebe con usuarios reales.
 
@@ -170,10 +215,13 @@ Entidades mínimas para el MVP:
 
 - **Usuario:** persona que accede a la app.
 - **Grupo:** espacio privado de amigos con una configuración de racha.
-- **Miembro:** perfil de una persona dentro de un grupo, con rol normal o administrador.
+- **Membresía:** relación entre un usuario/persona y un grupo, con rol normal o administrador.
 - **Quedada:** plan realizado por el grupo.
-- **Asistencia:** relación entre miembro y quedada.
+- **Asistencia:** relación entre membresía y quedada.
+- **Foto de quedada:** foto asociada a una quedada.
+- **Objeto perdido:** registro de una membresía que se dejó algo en una quedada.
 - **Insignia:** logro desbloqueable.
+- **Recuperación de racha:** intento de recuperar una racha perdida por un grupo.
 
 Entidades futuras:
 
@@ -181,33 +229,44 @@ Entidades futuras:
 - **Seguidor de grupo:** relación entre usuario y grupo.
 - **Publicación compartida:** contenido que un grupo decide hacer visible fuera del grupo.
 - **Highlight:** propuesta votable asociada a una quedada.
-- **Voto de highlight:** voto de un miembro sobre un highlight.
+- **Voto de highlight:** voto de una membresía sobre un highlight.
 
 Campos orientativos:
 
 - Grupo: nombre, descripción, foto de perfil, privacidad, frecuencia de racha, tregua de verano, fecha de creación.
-- Miembro: nombre, avatar, grupo, usuario asociado opcional, rol.
-- Quedada: título, fecha, grupo, conductor, tipo de plan, momento del día, lugar, comida, duración, objetos perdidos, foto.
-- Asistencia: quedada, miembro, estado.
-- Insignia: nombre, descripción, criterio, fecha de desbloqueo.
+- Membresía: apodo, avatar de grupo, grupo, usuario asociado opcional, rol, estado.
+- Quedada: título, fecha, grupo, creador, conductor, tipo de plan, momento del día, lugar, comida, duración y notas.
+- Asistencia: quedada, membresía, estado.
+- Foto de quedada: quedada, URL, descripción.
+- Objeto perdido: quedada, membresía, descripción opcional.
+- Insignia: nombre, descripción, criterio, tipo, imagen.
+- Recuperación de racha: grupo, racha perdida, periodos necesarios, periodos completados, estado, fecha de inicio y fecha de fin.
 - Highlight: quedada, autor, texto, foto, votos.
 
 ## 11. Roles Y Permisos
 
-Cada grupo tendrá al menos un administrador. Inicialmente, el administrador será el usuario o miembro que crea el grupo.
+Cada grupo tendrá al menos un administrador. Inicialmente, el administrador será la membresía asociada al usuario que crea el grupo.
+
+En el MVP habrá un único administrador por grupo. Será el creador, y el rol no se podrá transferir ni retirar manualmente. La única excepción será el borrado de cuenta del admin: en ese caso, el rol admin pasará al miembro activo más antiguo del grupo.
+
+Si no existe otro miembro activo, el admin deberá borrar el grupo antes de borrar su cuenta o cancelar el borrado de cuenta.
 
 Permisos del administrador:
 
 - Modificar el nombre del grupo.
 - Modificar la foto de perfil del grupo.
-- Cambiar la configuración de racha.
+- Elegir la configuración de racha al crear el grupo.
 - Activar o desactivar reglas especiales, como la tregua de verano.
+- Eliminar membresías del grupo sin borrar su histórico.
 - Eliminar el grupo.
 
-Permisos de miembros normales:
+Permisos de membresías con rol miembro:
 
 - Ver el contenido privado del grupo.
-- Registrar o participar en quedadas, según las reglas que se definan.
+- Registrar y editar quedadas.
+
+Permisos futuros de membresías con rol miembro:
+
 - Proponer highlights.
 - Votar highlights.
 
@@ -217,10 +276,11 @@ Para el MVP, los permisos pueden implementarse de forma simple, pero deben queda
 
 - Inicio del grupo: racha actual, próxima acción y resumen rápido.
 - Historial: lista de quedadas realizadas.
-- Detalle de quedada: información, asistentes, foto y detalles del plan.
+- Detalle de quedada: información, asistentes, fotos, notas, objetos perdidos y detalles del plan.
 - Nueva quedada: formulario para registrar un plan.
-- Miembros: lista de personas del grupo.
-- Insignias: logros desbloqueados y pendientes.
+- Membresías: lista de personas visibles del grupo.
+- Salón de la fama: insignias de racha desbloqueadas y pendientes.
+- Accesos a secciones futuras con estado "Próximamente": calendario, álbum, highlights, trofeos y cartas cuando corresponda.
 - Ajustes del grupo: nombre, foto, configuración de racha y acciones de administrador.
 
 Pantallas futuras:
@@ -231,6 +291,7 @@ Pantallas futuras:
 - Seguidores de usuario.
 - Seguidores de grupo.
 - Votación de highlights.
+- Salón de la fama personal completo con trofeos y cartas coleccionables.
 
 ## 13. Criterios De Éxito
 
