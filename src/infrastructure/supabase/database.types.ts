@@ -344,6 +344,24 @@ export interface Database {
         };
         Returns: string;
       };
+      editar_quedada_completa_mvp: {
+        Args: {
+          p_quedada_id: string;
+          p_titulo: string;
+          p_fecha: string;
+          p_conductor_membresia_id?: string | null;
+          p_tipo_plan_texto?: string | null;
+          p_momento_dia?: 'manana' | 'tarde' | 'tarde_noche' | 'noche' | 'dia_completo' | null;
+          p_lugar_texto?: string | null;
+          p_comida_texto?: string | null;
+          p_duracion_minutos?: number | null;
+          p_notas?: string | null;
+          p_asistentes_membresia_ids?: string[];
+          p_objetos_perdidos_membresia_ids?: string[];
+          p_fotos?: Json;
+        };
+        Returns: undefined;
+      };
       desbloquear_insignias_racha_mvp: {
         Args: {
           p_grupo_id: string;

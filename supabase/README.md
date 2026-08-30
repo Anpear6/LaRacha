@@ -12,6 +12,7 @@ Esta carpeta contiene la parte de base de datos de La Racha.
 - `migrations/006_registrar_quedada_completa.sql`: crea una funcion transaccional para registrar una quedada completa desde la app.
 - `migrations/007_desbloquear_insignias_racha.sql`: crea una funcion transaccional para guardar insignias de racha desbloqueadas sin duplicarlas.
 - `migrations/008_gestion_grupos_membresias.sql`: crea funciones transaccionales para crear, editar y borrar grupos, y para gestionar membresias.
+- `migrations/009_editar_quedada_completa.sql`: crea una funcion transaccional para editar una quedada completa.
 
 ## Datos Semilla
 
@@ -118,4 +119,19 @@ Para probar estas funciones desde el proyecto:
 
 ```bash
 npm run check:gestion-grupos
+```
+
+`editar_quedada_completa_mvp` edita una quedada completa en una transaccion:
+
+- actualiza titulo, fecha, conductor, tipo de plan, momento del dia, lugar, comida, duracion y notas;
+- crea opciones reutilizables nuevas si aparecen durante la edicion;
+- actualiza asistencias de las membresias activas del grupo;
+- actualiza objetos perdidos de las membresias activas del grupo;
+- reemplaza las fotos asociadas a la quedada;
+- conserva historico asociado a membresias eliminadas.
+
+Para probarla desde el proyecto:
+
+```bash
+npm run check:editar-quedada
 ```

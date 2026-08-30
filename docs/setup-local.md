@@ -46,6 +46,7 @@ Orden actual de migraciones:
 6. `supabase/migrations/006_registrar_quedada_completa.sql`
 7. `supabase/migrations/007_desbloquear_insignias_racha.sql`
 8. `supabase/migrations/008_gestion_grupos_membresias.sql`
+9. `supabase/migrations/009_editar_quedada_completa.sql`
 
 Los datos semilla están en:
 
@@ -116,6 +117,14 @@ npm run check:gestion-grupos
 ```
 
 Este comando crea un grupo temporal, edita el grupo, edita la membresía propia, crea un miembro sin cuenta, lo edita, lo elimina lógicamente y al final pregunta si se quiere borrar el grupo temporal.
+
+Para probar la edición completa de una quedada:
+
+```bash
+npm run check:editar-quedada
+```
+
+Este comando crea una quedada de prueba, la edita en una transacción y luego lee el historial para comprobar el resultado. La quedada queda guardada, porque en el MVP no se borran quedadas registradas.
 
 ## Punto De Expansion
 
