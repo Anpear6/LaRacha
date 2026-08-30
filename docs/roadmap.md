@@ -55,35 +55,50 @@ Objetivo: convertir el análisis del MVP en una base de datos inicial.
 - [x] Verificar estructura y datos semilla en Supabase.
 - [x] Diseñar políticas RLS del MVP.
 - [x] Crear migración SQL con políticas RLS.
-- [ ] Alinear usuarios semilla con Supabase Auth.
-- [ ] Ejecutar políticas RLS en Supabase.
-- [ ] Verificar permisos básicos con usuarios reales.
+- [x] Alinear usuarios semilla con Supabase Auth.
+- [x] Ejecutar políticas RLS en Supabase.
+- [x] Ejecutar migración de estados pendientes y pausados de recuperación.
+- [x] Verificar permisos básicos con usuarios reales desde script autenticado.
+- [ ] Dejar preparado el flujo para automatizar migraciones y seed más adelante.
 
 ## Fase 3 - Dominio Y Lógica De Negocio
 
 Objetivo: implementar reglas del producto en TypeScript sin depender todavía de la interfaz.
 
-- [ ] Crear modelos TypeScript: usuario, grupo, membresía, opción de grupo, quedada, asistencia, racha e insignia.
-- [ ] Crear modelos TypeScript para fotos de quedada y objetos perdidos.
-- [ ] Definir roles de membresía: admin y miembro.
-- [ ] Definir estados de membresía: activa y eliminada.
-- [ ] Definir estados de asistencia: asistió y no asistió.
-- [ ] Definir frecuencias de racha permitidas.
-- [ ] Crear función para validar si una quedada cuenta para la racha.
-- [ ] Crear función para calcular la racha actual.
-- [ ] Crear función para detectar pérdida y recuperación de racha.
-- [ ] Crear función para comprobar permisos de administrador.
-- [ ] Crear función para generar asistencias al registrar una quedada.
+- [x] Crear configuración mínima de TypeScript.
+- [x] Crear configuración mínima de Vitest.
+- [x] Crear modelos TypeScript: usuario, grupo, membresía, opción de grupo, quedada, asistencia, racha e insignia.
+- [x] Crear modelos TypeScript para fotos de quedada y objetos perdidos.
+- [x] Definir roles de membresía: admin y miembro.
+- [x] Definir estados de membresía: activa y eliminada.
+- [x] Definir estados de asistencia: asistió y no asistió.
+- [x] Definir frecuencias de racha permitidas.
+- [x] Crear función para validar si una quedada cuenta para la racha.
+- [x] Crear función para calcular la racha actual.
+- [x] Crear función para detectar pérdida de racha.
+- [x] Crear función para crear recuperación pendiente.
+- [x] Crear función para activar, pausar, reanudar, completar y fallar recuperación de racha.
+- [x] Crear función para comprobar permisos de administrador.
+- [x] Crear función para generar asistencias al registrar una quedada.
 - [ ] Crear función para editar quedadas y recalcular datos derivados.
-- [ ] Crear función para desbloquear insignias de racha.
-- [ ] Crear tests de la lógica principal con Vitest.
+- [x] Crear función para desbloquear insignias de racha.
+- [x] Crear función para resolver estado completo de racha, pérdida, recuperación e insignias.
+- [x] Crear primeros tests de la lógica principal con Vitest.
 
 ## Fase 4 - Backend Y Acceso A Datos
 
 Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 
-- [ ] Configurar cliente de Supabase.
-- [ ] Crear flujo básico de autenticación.
+- [x] Instalar cliente oficial de Supabase para la app.
+- [x] Configurar cliente base de Supabase.
+- [x] Crear plantilla de variables de entorno.
+- [x] Crear tipos TypeScript iniciales de la base de datos.
+- [x] Crear mapeadores entre filas de Supabase y modelos de dominio.
+- [x] Documentar setup local inicial.
+- [x] Comprobar conexión anónima con Supabase.
+- [x] Crear script de comprobación con login real.
+- [x] Ejecutar comprobación con login real.
+- [ ] Crear flujo básico de autenticación en la app.
 - [ ] Crear operaciones para leer grupos de un usuario.
 - [ ] Crear operaciones para crear y editar grupos.
 - [ ] Crear operaciones para gestionar membresías.
@@ -188,4 +203,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Diseñar y aplicar las políticas RLS del MVP para proteger los datos privados por grupo.
+Seguir con la lógica de dominio: preparar la operación de aplicación que recalcula racha, recuperación e insignias al registrar o editar una quedada.

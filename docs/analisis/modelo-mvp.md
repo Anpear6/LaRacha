@@ -309,6 +309,10 @@ Notas:
 - Insignias iniciales: `1_semana`, `2_semanas`, `1_mes`, `3_meses`, `6_meses`, `1_anio`.
 - Las insignias son datos semilla del sistema y no las crean los usuarios.
 - Mientras no estén diseñadas las imágenes definitivas, las insignias podrán usar la imagen por defecto de `docs/recursos/Insignias/Por Defecto.png`.
+- El campo `criterio` identifica el hito temporal de racha: `1_semana`, `2_semanas`, `1_mes`, `3_meses`, `6_meses` o `1_anio`.
+- Las insignias se desbloquean según tiempo real de racha conseguido por el grupo.
+- El tiempo usado para recuperar una racha rota no desbloquea insignias nuevas.
+- Un grupo mensual puede desbloquear hitos de 1 mes en adelante, pero no insignias semanales.
 
 ### INSIGNIA_DESBLOQUEADA
 
@@ -364,7 +368,9 @@ Notas:
 - `racha_perdida_periodos` guarda cuántos periodos llevaba el grupo antes de perder la racha.
 - `periodos_necesarios` indica cuántos periodos consecutivos debe cumplir el grupo para recuperarla.
 - `periodos_completados` permite mostrar progreso.
-- Valores iniciales de `estado`: `en_progreso`, `completada`, `fallida`.
+- Valores de `estado`: `pendiente`, `en_progreso`, `pausada`, `completada`, `fallida`.
+- `pendiente` significa que la racha está rota, pero el administrador todavía no ha aceptado iniciar la recuperación.
+- `pausada` permite detener temporalmente una recuperación por una regla especial, como la tregua de verano.
 - Esta entidad permitirá estadísticas futuras como veces que se perdió la racha, recuperaciones completadas y periodos invertidos en recuperar.
 - Si una recuperación falla, se conserva en histórico y una recuperación nueva empieza desde cero.
 
@@ -434,9 +440,17 @@ GRUPO.id ───< RECUPERACION_RACHA.grupo_id
 - Las opciones reutilizables de `tipo_plan`, `lugar` y `comida` pertenecen al grupo.
 - Al registrar una quedada, se crea una asistencia para cada membresía activa del grupo.
 - Solo cuentan para la racha las asistencias con `estado = asistio`.
+- La racha no se considera perdida hasta que termina el periodo que tocaba cumplir.
+- Si el último periodo cerrado no se cumplió y antes existía una racha, se crea una pérdida de racha.
+- Si ya existe una recuperación activa, no se detecta una nueva pérdida encima de esa recuperación.
 - Si una racha se pierde, el MVP permitirá recuperarla quedando de forma consecutiva durante el tiempo equivalente a la racha perdida. Ese periodo recupera la racha, pero no suma como progreso nuevo.
-- Cuando se pierde una racha, se crea una recuperación con `estado = en_progreso`.
-- Un grupo no debería tener más de una recuperación en progreso al mismo tiempo.
+- Cuando se pierde una racha, se crea una recuperación con `estado = pendiente`.
+- La recuperación no empieza hasta que el administrador decide reactivar la racha.
+- Mientras la recuperación esté `pendiente`, `en_progreso` o `pausada`, la racha queda congelada y no se desbloquean insignias nuevas.
+- Las insignias se desbloquean según tiempo real de racha, no por número bruto de quedadas.
+- Una recuperación completada devuelve al grupo la racha que ya tenía, pero el tiempo usado para recuperarla no suma como racha nueva.
+- Un grupo mensual puede desbloquear insignias de 1 mes en adelante, pero no insignias semanales.
+- Un grupo no debería tener más de una recuperación activa al mismo tiempo.
 
 ## Decisiones Cerradas Para El MVP
 
@@ -449,3 +463,4 @@ GRUPO.id ───< RECUPERACION_RACHA.grupo_id
 - `objetos_perdidos` tendrá tabla propia para registrar varias personas en una misma quedada.
 - `ASISTENCIA.estado` solo tendrá `asistio` y `no_asistio`.
 - La recuperación de racha tendrá entidad propia en el MVP.
+- Las insignias de racha se desbloquearán por tiempo real de racha conseguido.

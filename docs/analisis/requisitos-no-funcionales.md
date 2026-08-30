@@ -13,6 +13,7 @@ Los requisitos no funcionales describen cómo debe comportarse el sistema.
 - RNF-004: La aplicación debe proteger las rutas privadas cuando exista autenticación.
 - RNF-005: La base de datos debe aplicar reglas de acceso por grupo.
 - RNF-006: No deben exponerse claves privadas en el frontend ni en el repositorio.
+- RNF-006A: El repositorio solo debe incluir plantillas de variables de entorno, como `.env.example`, nunca archivos con claves reales.
 
 ## Usabilidad
 
@@ -44,3 +45,4 @@ Los requisitos no funcionales describen cómo debe comportarse el sistema.
 - RNF-020: Las reglas críticas de negocio deben tener tests.
 - RNF-021: El proyecto debe poder ejecutarse localmente con instrucciones claras.
 - RNF-022: La documentación debe ser suficiente para retomar el proyecto después de una pausa.
+- RNF-023: Las migraciones y datos semilla deben poder automatizarse más adelante sin rediseñar la estructura del proyecto.

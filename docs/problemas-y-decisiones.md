@@ -57,6 +57,8 @@ Formato recomendado:
 
 **Decisión actual:** la recuperación de racha entra en el MVP como entidad propia. Si se pierde una racha, el grupo puede hacer un reto de compensación equivalente al tiempo perdido. Ese periodo recupera la racha, pero no suma como progreso nuevo.
 
+**Detalle actualizado:** al romperse una racha, la recuperación queda en estado `pendiente` y la racha se congela. El administrador debe reactivarla desde un mensaje de la app. Mientras la recuperación esté pendiente, en progreso o pausada, no se desbloquean insignias nuevas. Si el grupo falla una recuperación, el intento queda como `fallida` y el siguiente intento empieza desde cero. La tregua de verano puede pausar una recuperación en progreso sin borrar el avance acumulado.
+
 **Estado:** entra en el MVP como regla de negocio.
 
 ## 6. Administrador Del Grupo
@@ -302,3 +304,147 @@ Formato recomendado:
 **Decisión actual:** dejar accesos visibles a algunas secciones futuras con un estado de "Próximamente". Por ejemplo, si el usuario entra en calendario antes de que exista, verá un mensaje tipo "Próximamente: Calendario".
 
 **Estado:** decidido como estrategia de expansión.
+
+## 28. Recuperación Pendiente Hasta Acción Del Administrador
+
+**Problema:** si la recuperación empieza automáticamente al romperse una racha, el grupo podría entrar en un reto de recuperación sin haberlo decidido conscientemente.
+
+**Impacto:** eso puede ser confuso en la interfaz y menos motivador, porque la app tomaría una decisión importante sin preguntar al administrador.
+
+**Decisión actual:** cuando una racha se rompe, se crea una recuperación en estado `pendiente`. La racha queda congelada y las insignias aparecen en gris hasta que el administrador decide reactivar la racha desde un mensaje de la app. Solo entonces la recuperación pasa a `en_progreso`.
+
+**Estado:** decidido e implementado en lógica de dominio.
+
+## 29. Recuperación Fallida Reinicia El Progreso
+
+**Problema:** si un grupo necesitaba 3 periodos para recuperar una racha y cumple 2, aparece la duda de si al fallar conserva parte del avance o debe empezar de cero.
+
+**Impacto:** conservar progreso parcial haría la recuperación más suave, pero también quitaría fuerza a la idea de compensar una racha perdida de forma consecutiva.
+
+**Decisión actual:** si una recuperación falla, el intento queda como `fallida`. El progreso histórico se conserva en ese intento para estadísticas, pero el siguiente intento vuelve a empezar desde 0 y exige completar todos los periodos necesarios.
+
+**Estado:** decidido e implementado en lógica de dominio.
+
+## 30. Tregua De Verano Y Recuperación
+
+**Problema:** una recuperación en progreso puede coincidir con verano, justo cuando muchos grupos se ven menos.
+
+**Impacto:** si la tregua no afecta a recuperaciones, podría castigar la misma situación vital que la tregua intenta suavizar.
+
+**Decisión actual:** la tregua de verano puede pausar una recuperación en progreso. La recuperación pasa a `pausada` y conserva sus periodos completados. Cuando termina la tregua, puede volver a `en_progreso`.
+
+**Estado:** decidido e implementado en lógica de dominio.
+
+## 31. Propiedades Opcionales En TypeScript
+
+**Problema:** con `exactOptionalPropertyTypes`, TypeScript distingue entre una propiedad ausente y una propiedad con valor `undefined`.
+
+**Impacto:** al modelar miembros sin cuenta o recuperaciones sin `fechaFin`, escribir `usuarioId: undefined` o `fechaFin: undefined` provoca errores de tipos aunque los tests de ejecución pasen.
+
+**Decisión actual:** representar los campos opcionales como propiedades ausentes cuando no existen. En tests, se usan helpers específicos para crear membresías sin cuenta. En lógica, no se asigna `fechaFin` hasta que la recuperación termina o falla.
+
+**Estado:** resuelto.
+
+## 32. Desbloqueo De Insignias Por Tiempo Real
+
+**Problema:** las insignias de racha podían interpretarse como número de quedadas, número de periodos o tiempo real. Eso se volvía raro con frecuencias distintas a semanal.
+
+**Impacto:** un grupo mensual no debería desbloquear insignias semanales solo porque su primer periodo cubre más de 7 días. A la vez, la recuperación de racha no debe permitir conseguir insignias nuevas, porque ese tiempo sirve para recuperar lo perdido, no para avanzar.
+
+**Decisión actual:** las insignias se desbloquean por tiempo real de racha, respetando la frecuencia del grupo. Las frecuencias semanales pueden desbloquear hitos semanales, mensuales y anuales. Las frecuencias mensuales empiezan en hitos de 1 mes. La frecuencia anual empieza en 1 año.
+
+**Detalle importante:** mientras exista una recuperación `pendiente`, `en_progreso` o `pausada`, no se desbloquean insignias nuevas. Si una racha de 2 semanas se rompe y se recupera tras otras 2 semanas, el grupo vuelve a tener 2 semanas de racha, pero no consigue la insignia de 1 mes.
+
+**Estado:** decidido e implementado en lógica de dominio.
+
+## 33. Cuándo Se Considera Perdida Una Racha
+
+**Problema:** si la app revisa la racha en mitad de una semana, mes o año, podría pensar que se ha roto aunque el grupo todavía tenga tiempo para quedar.
+
+**Impacto:** romper la racha antes de que termine el periodo sería injusto y confuso. También podría crear recuperaciones innecesarias.
+
+**Decisión actual:** la pérdida de racha solo se detecta cuando termina el periodo que tocaba cumplir. Si el último periodo cerrado no se cumplió y antes había una racha, se crea una pérdida. Si ya existe una recuperación activa, no se crea otra encima.
+
+**Estado:** decidido e implementado en lógica de dominio.
+
+## 34. Función Orquestadora De Estado De Racha
+
+**Problema:** calcular racha, detectar pérdida, crear recuperación pendiente y desbloquear insignias son reglas separadas, pero en la app ocurren juntas después de registrar o editar una quedada.
+
+**Impacto:** si cada pantalla o endpoint intenta unir esas reglas por su cuenta, aumentan los errores y las incoherencias. Por ejemplo, se podría desbloquear una insignia justo cuando la racha está rota o en recuperación.
+
+**Decisión actual:** crear una función de dominio que resuelve el estado completo de la racha de un grupo. La función no escribe en base de datos; solo devuelve qué se debe mostrar y qué acciones derivadas tocaría guardar después: recuperación pendiente o insignias desbloqueables.
+
+**Estado:** implementado en lógica de dominio.
+
+## 35. Ejecución Manual Ahora, Automatización Después
+
+**Problema:** ejecutar SQL a mano desde Supabase es útil para aprender, pero a largo plazo puede ser incómodo y propenso a errores si hay que reconstruir la base de datos o trabajar desde otro ordenador.
+
+**Impacto:** sin automatización, migraciones y datos semilla dependen de recordar qué archivo copiar y en qué orden. Eso complica el flujo profesional del proyecto.
+
+**Decisión actual:** durante el MVP inicial se acepta ejecutar migraciones manualmente desde el SQL Editor para entender cada cambio. A la vez, se deja documentado como punto de expansión preparar Supabase CLI o scripts de npm para aplicar migraciones y seed automáticamente.
+
+**Estado:** documentado como mejora futura.
+
+## 36. Instalación De Dependencias Con Permisos Del Entorno
+
+**Problema:** al instalar paquetes con `npm install`, el entorno local bloqueó la descarga desde el registro de npm con un error `EACCES`.
+
+**Impacto:** no era un error del código del proyecto, sino de permisos/red del entorno donde se ejecuta Codex. Podía parecer que npm o Supabase estaban mal configurados aunque el problema era externo.
+
+**Solución aplicada:** se reintentó la instalación con permiso explícito. Así se instalaron `@supabase/supabase-js` y `@types/node` correctamente.
+
+**Estado:** resuelto.
+
+## 37. Variables De Entorno Para Supabase
+
+**Problema:** la app necesita URL y clave pública de Supabase, pero no conviene guardar claves reales en el repositorio.
+
+**Impacto:** si se sube un archivo `.env` real a GitHub, se podrían exponer credenciales. Aunque la clave anon de Supabase es pública en el frontend, sigue siendo mejor tratar la configuración real como dato de entorno y no mezclarla con documentación o código.
+
+**Decisión actual:** crear `.env.example` como plantilla y mantener `.env`, `.env.local` y variantes fuera de Git mediante `.gitignore`. El cliente base lee `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+
+**Estado:** implementado.
+
+## 38. Traducción Entre Base De Datos Y Dominio
+
+**Problema:** PostgreSQL usa nombres como `grupo_id` y `fecha_creacion`, mientras que el código TypeScript del dominio usa `grupoId` y `fechaCreacion`.
+
+**Impacto:** si cada operación traduce esos nombres a mano, aparecerán errores repetidos y será más difícil mantener el código. Además, la base de datos devuelve `null`, pero en el dominio preferimos omitir propiedades opcionales cuando no existen.
+
+**Decisión actual:** crear mapeadores específicos para convertir filas de Supabase a modelos del dominio. Así la lógica de negocio no necesita conocer detalles de SQL ni nombres `snake_case`.
+
+**Estado:** implementado y cubierto con tests.
+
+## 39. Variables De Entorno Con Valores De Ejemplo
+
+**Problema:** al probar la conexión con Supabase, el script falló con `fetch failed`.
+
+**Causa:** `.env.local` existía y tenía las variables correctas, pero al menos la URL seguía usando el valor de ejemplo `tu-proyecto.supabase.co` en vez de la URL real del proyecto.
+
+**Solución aplicada:** mejorar el script de comprobación para detectar valores de plantilla y mostrar un error más claro antes de intentar conectarse.
+
+**Estado:** resuelto. Tras guardar los valores reales, el script conectó correctamente con Supabase.
+
+## 40. RLS Devuelve Cero Datos Sin Usuario Logueado
+
+**Problema:** la primera comprobación real con Supabase conectó bien, pero devolvió 0 usuarios y 0 grupos visibles.
+
+**Causa:** el script usa la clave `anon` sin sesión de usuario. Como RLS está activo, la base de datos oculta los datos privados cuando no hay usuario autenticado.
+
+**Impacto:** esto confirma que la conexión funciona y que la privacidad por defecto está actuando. Para comprobar que Ángela o Fran ven sus datos, hace falta iniciar sesión con un usuario real.
+
+**Decisión actual:** mantener esta comprobación como prueba básica de conexión anónima y preparar una comprobación autenticada como siguiente paso.
+
+**Estado:** resuelto como comportamiento esperado.
+
+## 41. Comprobación Autenticada Sin Guardar Contraseñas
+
+**Problema:** para validar RLS de verdad hace falta iniciar sesión con un usuario real, pero no se deben guardar contraseñas en archivos del proyecto.
+
+**Impacto:** si una contraseña se escribe en `.env.local`, scripts o documentación, podría acabar expuesta por accidente.
+
+**Decisión actual:** crear un script de comprobación autenticada que pide email y contraseña por terminal en tiempo de ejecución. El script usa Supabase Auth, lee los datos visibles para ese usuario y no guarda la contraseña.
+
+**Estado:** implementado y ejecutado correctamente con usuario real.

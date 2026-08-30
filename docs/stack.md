@@ -43,6 +43,10 @@ PostgreSQL encaja muy bien con La Racha porque el dominio es relacional:
 
 Aprender PostgreSQL también es útil porque SQL sigue siendo una habilidad muy transferible.
 
+En el código, la conexión se hará con el cliente oficial `@supabase/supabase-js`. Las claves reales no se guardan en Git: el repositorio solo incluye `.env.example` como plantilla, y cada entorno tendrá su propio archivo privado de variables.
+
+La capa de acceso a datos traducirá las filas de Supabase al modelo de dominio mediante mapeadores. Así la lógica de negocio trabaja con nombres TypeScript (`grupoId`) y no con nombres de tabla (`grupo_id`).
+
 ### Tailwind CSS
 
 Tailwind permite crear una interfaz cuidada sin dedicar demasiado tiempo a organizar CSS desde cero. También se usa bastante en proyectos modernos con React y Next.js.

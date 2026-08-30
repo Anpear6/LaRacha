@@ -201,11 +201,16 @@ Si un grupo pierde la racha, existirá una mecánica de recuperación desde el M
 Idea inicial:
 
 - Si se pierde una racha, el grupo puede recuperarla completando un reto de compensación.
+- Al romperse, la racha queda congelada y la recuperación queda pendiente.
+- La recuperación no empieza hasta que el administrador decide reactivar la racha desde un mensaje de la aplicación.
 - Ejemplo: si se pierde una racha de 3 semanas, el grupo debe quedar 3 semanas seguidas para recuperarla.
 - Las semanas usadas para recuperar la racha no suman como nueva racha.
 - En el ejemplo anterior, después de 3 semanas de recuperación, el grupo recuperaría su racha de 3 semanas, no pasaría a tener 6.
 - La recuperación se guardará como entidad propia para poder mostrar progreso y calcular estadísticas históricas.
 - Esta información permitirá saber cuántas veces se perdió la racha, cuántas recuperaciones se completaron y cuánto tiempo se invirtió recuperando.
+- Si fallan durante la recuperación, el intento queda como fallido y el grupo tendrá que volver a completar todos los periodos necesarios desde cero.
+- Mientras una recuperación no esté completada, no se desbloquean insignias nuevas.
+- La tregua de verano podrá pausar una recuperación en progreso sin borrar el avance acumulado.
 
 Estas reglas son provisionales y se podrán ajustar cuando se pruebe con usuarios reales.
 
