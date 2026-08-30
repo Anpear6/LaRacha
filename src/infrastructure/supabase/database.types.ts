@@ -351,6 +351,71 @@ export interface Database {
         };
         Returns: string[];
       };
+      crear_grupo_mvp: {
+        Args: {
+          p_nombre: string;
+          p_descripcion?: string | null;
+          p_foto_perfil_url?: string | null;
+          p_frecuencia_racha?:
+            | 'dos_veces_semana'
+            | 'semanal'
+            | 'dos_al_mes'
+            | 'mensual'
+            | 'seis_al_anio';
+          p_apodo_admin?: string | null;
+          p_avatar_admin_url?: string | null;
+        };
+        Returns: Array<{
+          grupo_id: string;
+          membresia_id: string;
+        }>;
+      };
+      actualizar_grupo_mvp: {
+        Args: {
+          p_grupo_id: string;
+          p_nombre: string;
+          p_descripcion?: string | null;
+          p_foto_perfil_url?: string | null;
+          p_tregua_verano_activa?: boolean | null;
+        };
+        Returns: undefined;
+      };
+      eliminar_grupo_mvp: {
+        Args: {
+          p_grupo_id: string;
+        };
+        Returns: undefined;
+      };
+      crear_miembro_sin_cuenta_mvp: {
+        Args: {
+          p_grupo_id: string;
+          p_apodo: string;
+          p_avatar_grupo_url?: string | null;
+        };
+        Returns: string;
+      };
+      actualizar_membresia_propia_mvp: {
+        Args: {
+          p_membresia_id: string;
+          p_apodo: string;
+          p_avatar_grupo_url?: string | null;
+        };
+        Returns: undefined;
+      };
+      actualizar_miembro_sin_cuenta_mvp: {
+        Args: {
+          p_membresia_id: string;
+          p_apodo: string;
+          p_avatar_grupo_url?: string | null;
+        };
+        Returns: undefined;
+      };
+      eliminar_membresia_mvp: {
+        Args: {
+          p_membresia_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

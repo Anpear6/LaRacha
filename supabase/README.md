@@ -11,6 +11,7 @@ Esta carpeta contiene la parte de base de datos de La Racha.
 - `migrations/005_recovery_pending_and_paused_states.sql`: actualiza los estados de recuperacion de racha para permitir recuperaciones pendientes y pausadas.
 - `migrations/006_registrar_quedada_completa.sql`: crea una funcion transaccional para registrar una quedada completa desde la app.
 - `migrations/007_desbloquear_insignias_racha.sql`: crea una funcion transaccional para guardar insignias de racha desbloqueadas sin duplicarlas.
+- `migrations/008_gestion_grupos_membresias.sql`: crea funciones transaccionales para crear, editar y borrar grupos, y para gestionar membresias.
 
 ## Datos Semilla
 
@@ -103,3 +104,18 @@ npm run check:desbloquear-insignias
 ```
 
 El script muestra los desbloqueos calculados y pide confirmacion antes de insertar nada.
+
+`crear_grupo_mvp`, `actualizar_grupo_mvp`, `eliminar_grupo_mvp`, `crear_miembro_sin_cuenta_mvp`, `actualizar_membresia_propia_mvp`, `actualizar_miembro_sin_cuenta_mvp` y `eliminar_membresia_mvp` cubren la gestion basica de grupos y membresias del MVP:
+
+- crear grupo con su membresia administradora inicial;
+- editar datos del grupo sin modificar la frecuencia de racha;
+- borrar un grupo completo si lo hace el admin;
+- crear y editar miembros sin cuenta;
+- editar el apodo y avatar de la propia membresia;
+- eliminar miembros de forma logica, conservando su historico.
+
+Para probar estas funciones desde el proyecto:
+
+```bash
+npm run check:gestion-grupos
+```

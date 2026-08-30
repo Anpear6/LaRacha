@@ -10,7 +10,8 @@
     "check:supabase": "tsx scripts/check-supabase.ts",
     "check:supabase:auth": "tsx scripts/check-supabase-auth.ts",
     "check:registrar-quedada": "tsx scripts/check-registrar-quedada.ts",
-    "check:desbloquear-insignias": "tsx scripts/check-desbloquear-insignias.ts"
+    "check:desbloquear-insignias": "tsx scripts/check-desbloquear-insignias.ts",
+    "check:gestion-grupos": "tsx scripts/check-gestion-grupos-membresias.ts"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

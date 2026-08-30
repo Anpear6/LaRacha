@@ -1,8 +1,200 @@
 import { describe, expect, it } from 'vitest';
-import { desbloquearInsigniasRacha, registrarQuedadaCompleta } from '../../src/infrastructure';
+import {
+  actualizarGrupo,
+  actualizarMembresiaPropia,
+  actualizarMiembroSinCuenta,
+  crearGrupo,
+  crearMiembroSinCuenta,
+  desbloquearInsigniasRacha,
+  eliminarGrupo,
+  eliminarMembresia,
+  registrarQuedadaCompleta,
+} from '../../src/infrastructure';
 import type { LaRachaSupabaseClient } from '../../src/infrastructure';
 
 describe('mutaciones de Supabase', () => {
+  it('llama al RPC de crear grupo con membresia admin inicial', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({
+          data: [{ grupo_id: 'grupo-1', membresia_id: 'membresia-admin' }],
+          error: null,
+        });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    const creado = await crearGrupo(supabase, {
+      nombre: 'Hermanitos',
+      descripcion: 'Grupo de prueba',
+      frecuenciaRacha: 'semanal',
+      apodoAdmin: 'Angela',
+    });
+
+    expect(creado).toEqual({ grupoId: 'grupo-1', membresiaId: 'membresia-admin' });
+    expect(llamadas).toEqual([
+      {
+        nombre: 'crear_grupo_mvp',
+        args: {
+          p_nombre: 'Hermanitos',
+          p_descripcion: 'Grupo de prueba',
+          p_foto_perfil_url: null,
+          p_frecuencia_racha: 'semanal',
+          p_apodo_admin: 'Angela',
+          p_avatar_admin_url: null,
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de actualizar grupo sin enviar frecuencia de racha', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await actualizarGrupo(supabase, {
+      grupoId: 'grupo-1',
+      nombre: 'Hermanitos editado',
+      treguaVeranoActiva: true,
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'actualizar_grupo_mvp',
+        args: {
+          p_grupo_id: 'grupo-1',
+          p_nombre: 'Hermanitos editado',
+          p_descripcion: null,
+          p_foto_perfil_url: null,
+          p_tregua_verano_activa: true,
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de eliminar grupo', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await eliminarGrupo(supabase, 'grupo-1');
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'eliminar_grupo_mvp',
+        args: { p_grupo_id: 'grupo-1' },
+      },
+    ]);
+  });
+
+  it('llama al RPC de crear miembro sin cuenta', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: 'membresia-1', error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    const membresiaId = await crearMiembroSinCuenta(supabase, {
+      grupoId: 'grupo-1',
+      apodo: 'Beita',
+    });
+
+    expect(membresiaId).toBe('membresia-1');
+    expect(llamadas).toEqual([
+      {
+        nombre: 'crear_miembro_sin_cuenta_mvp',
+        args: {
+          p_grupo_id: 'grupo-1',
+          p_apodo: 'Beita',
+          p_avatar_grupo_url: null,
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de actualizar membresia propia', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await actualizarMembresiaPropia(supabase, {
+      membresiaId: 'membresia-1',
+      apodo: 'Anpear',
+      avatarGrupoUrl: '/avatar.png',
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'actualizar_membresia_propia_mvp',
+        args: {
+          p_membresia_id: 'membresia-1',
+          p_apodo: 'Anpear',
+          p_avatar_grupo_url: '/avatar.png',
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de actualizar miembro sin cuenta', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await actualizarMiembroSinCuenta(supabase, {
+      membresiaId: 'membresia-1',
+      apodo: 'Beita editada',
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'actualizar_miembro_sin_cuenta_mvp',
+        args: {
+          p_membresia_id: 'membresia-1',
+          p_apodo: 'Beita editada',
+          p_avatar_grupo_url: null,
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de eliminar membresia', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await eliminarMembresia(supabase, 'membresia-1');
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'eliminar_membresia_mvp',
+        args: { p_membresia_id: 'membresia-1' },
+      },
+    ]);
+  });
+
   it('llama al RPC de registrar quedada completa con los datos normalizados', async () => {
     const llamadas: unknown[] = [];
     const supabase = {
