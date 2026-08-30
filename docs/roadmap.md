@@ -80,7 +80,7 @@ Objetivo: implementar reglas del producto en TypeScript sin depender todavía de
 - [x] Crear función para activar, pausar, reanudar, completar y fallar recuperación de racha.
 - [x] Crear función para comprobar permisos de administrador.
 - [x] Crear función para generar asistencias al registrar una quedada.
-- [ ] Crear función para editar quedadas y recalcular datos derivados.
+- [x] Crear función para editar quedadas y recalcular datos derivados.
 - [x] Crear función para desbloquear insignias de racha.
 - [x] Crear función para resolver estado completo de racha, pérdida, recuperación e insignias.
 - [x] Crear primeros tests de la lógica principal con Vitest.
@@ -120,6 +120,9 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Crear operaciones para consultar historial de quedadas.
 - [x] Crear operaciones para consultar racha e insignias.
 - [ ] Validar consulta de racha e insignias contra Supabase real.
+- [x] Crear operaciones para guardar y gestionar recuperación de racha.
+- [x] Ejecutar migración SQL para operaciones de recuperación de racha.
+- [x] Validar recuperación de racha contra Supabase real.
 - [x] Crear operación para guardar insignias de racha desbloqueadas.
 - [x] Ejecutar migración SQL para guardar insignias de racha desbloqueadas.
 - [x] Validar guardado de insignias de racha contra Supabase real.
@@ -219,4 +222,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Crear operaciones de recuperación de racha: guardar recuperación pendiente y activarla cuando el administrador decida recuperar la racha.
+Revisar la fase backend MVP y cerrar los últimos huecos antes de empezar el frontend.

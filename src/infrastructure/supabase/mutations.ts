@@ -16,6 +16,14 @@ type ActualizarMembresiaPropiaArgs =
   Database['public']['Functions']['actualizar_membresia_propia_mvp']['Args'];
 type ActualizarMiembroSinCuentaArgs =
   Database['public']['Functions']['actualizar_miembro_sin_cuenta_mvp']['Args'];
+type GuardarRecuperacionPendienteArgs =
+  Database['public']['Functions']['guardar_recuperacion_pendiente_mvp']['Args'];
+type ActivarRecuperacionRachaArgs =
+  Database['public']['Functions']['activar_recuperacion_racha_mvp']['Args'];
+type RegistrarPeriodoRecuperacionCumplidoArgs =
+  Database['public']['Functions']['registrar_periodo_recuperacion_cumplido_mvp']['Args'];
+type FallarRecuperacionRachaArgs =
+  Database['public']['Functions']['fallar_recuperacion_racha_mvp']['Args'];
 
 export interface FotoNuevaQuedada {
   url: string;
@@ -87,6 +95,27 @@ export interface ActualizarMembresiaPerfilInput {
   membresiaId: string;
   apodo: string;
   avatarGrupoUrl?: string;
+}
+
+export interface GuardarRecuperacionPendienteInput {
+  grupoId: string;
+  rachaPerdidaPeriodos: number;
+  fechaInicio?: string;
+}
+
+export interface ActivarRecuperacionRachaInput {
+  recuperacionId: string;
+  fechaInicio?: string;
+}
+
+export interface RegistrarPeriodoRecuperacionCumplidoInput {
+  recuperacionId: string;
+  fechaFin?: string;
+}
+
+export interface FallarRecuperacionRachaInput {
+  recuperacionId: string;
+  fechaFin?: string;
 }
 
 export async function registrarQuedadaCompleta(
@@ -274,6 +303,113 @@ export async function eliminarMembresia(
   if (error) {
     throw new Error(`No se pudo eliminar la membresia: ${error.message}`);
   }
+}
+
+export async function guardarRecuperacionPendiente(
+  supabase: LaRachaSupabaseClient,
+  input: GuardarRecuperacionPendienteInput,
+): Promise<string> {
+  const args: GuardarRecuperacionPendienteArgs = {
+    p_grupo_id: input.grupoId,
+    p_racha_perdida_periodos: input.rachaPerdidaPeriodos,
+  };
+
+  if (input.fechaInicio) {
+    args.p_fecha_inicio = input.fechaInicio;
+  }
+
+  const { data, error } = await supabase.rpc('guardar_recuperacion_pendiente_mvp', args);
+
+  if (error) {
+    throw new Error(`No se pudo guardar la recuperacion pendiente: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function activarRecuperacionRacha(
+  supabase: LaRachaSupabaseClient,
+  input: ActivarRecuperacionRachaInput,
+): Promise<void> {
+  const args: ActivarRecuperacionRachaArgs = {
+    p_recuperacion_id: input.recuperacionId,
+  };
+
+  if (input.fechaInicio) {
+    args.p_fecha_inicio = input.fechaInicio;
+  }
+
+  const { error } = await supabase.rpc('activar_recuperacion_racha_mvp', args);
+
+  if (error) {
+    throw new Error(`No se pudo activar la recuperacion: ${error.message}`);
+  }
+}
+
+export async function pausarRecuperacionRacha(
+  supabase: LaRachaSupabaseClient,
+  recuperacionId: string,
+): Promise<void> {
+  const { error } = await supabase.rpc('pausar_recuperacion_racha_mvp', {
+    p_recuperacion_id: recuperacionId,
+  });
+
+  if (error) {
+    throw new Error(`No se pudo pausar la recuperacion: ${error.message}`);
+  }
+}
+
+export async function reanudarRecuperacionRacha(
+  supabase: LaRachaSupabaseClient,
+  recuperacionId: string,
+): Promise<void> {
+  const { error } = await supabase.rpc('reanudar_recuperacion_racha_mvp', {
+    p_recuperacion_id: recuperacionId,
+  });
+
+  if (error) {
+    throw new Error(`No se pudo reanudar la recuperacion: ${error.message}`);
+  }
+}
+
+export async function registrarPeriodoRecuperacionCumplido(
+  supabase: LaRachaSupabaseClient,
+  input: RegistrarPeriodoRecuperacionCumplidoInput,
+): Promise<void> {
+  const args: RegistrarPeriodoRecuperacionCumplidoArgs = {
+    p_recuperacion_id: input.recuperacionId,
+  };
+
+  if (input.fechaFin) {
+    args.p_fecha_fin = input.fechaFin;
+  }
+
+  const { error } = await supabase.rpc('registrar_periodo_recuperacion_cumplido_mvp', args);
+
+  if (error) {
+    throw new Error(`No se pudo avanzar la recuperacion: ${error.message}`);
+  }
+}
+
+export async function fallarRecuperacionRacha(
+  supabase: LaRachaSupabaseClient,
+  input: FallarRecuperacionRachaInput,
+): Promise<string> {
+  const args: FallarRecuperacionRachaArgs = {
+    p_recuperacion_id: input.recuperacionId,
+  };
+
+  if (input.fechaFin) {
+    args.p_fecha_fin = input.fechaFin;
+  }
+
+  const { data, error } = await supabase.rpc('fallar_recuperacion_racha_mvp', args);
+
+  if (error) {
+    throw new Error(`No se pudo fallar la recuperacion: ${error.message}`);
+  }
+
+  return data;
 }
 
 export async function desbloquearInsigniasRacha(

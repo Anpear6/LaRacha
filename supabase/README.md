@@ -13,6 +13,7 @@ Esta carpeta contiene la parte de base de datos de La Racha.
 - `migrations/007_desbloquear_insignias_racha.sql`: crea una funcion transaccional para guardar insignias de racha desbloqueadas sin duplicarlas.
 - `migrations/008_gestion_grupos_membresias.sql`: crea funciones transaccionales para crear, editar y borrar grupos, y para gestionar membresias.
 - `migrations/009_editar_quedada_completa.sql`: crea una funcion transaccional para editar una quedada completa.
+- `migrations/010_operaciones_recuperacion_racha.sql`: crea funciones para guardar, activar, pausar, reanudar, avanzar y fallar recuperaciones de racha.
 
 ## Datos Semilla
 
@@ -134,4 +135,18 @@ Para probarla desde el proyecto:
 
 ```bash
 npm run check:editar-quedada
+```
+
+Las funciones de recuperacion de racha cubren el ciclo basico del MVP:
+
+- `guardar_recuperacion_pendiente_mvp`: guarda una recuperacion pendiente si no hay otra activa;
+- `activar_recuperacion_racha_mvp`: permite al admin iniciar la recuperacion;
+- `registrar_periodo_recuperacion_cumplido_mvp`: avanza la recuperacion y la completa si llega al objetivo;
+- `pausar_recuperacion_racha_mvp` y `reanudar_recuperacion_racha_mvp`: gestionan pausas;
+- `fallar_recuperacion_racha_mvp`: marca el intento como fallido y crea un nuevo intento pendiente.
+
+Para probarlas desde el proyecto:
+
+```bash
+npm run check:recuperacion-racha
 ```

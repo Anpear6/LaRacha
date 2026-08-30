@@ -3,12 +3,18 @@ import {
   actualizarGrupo,
   actualizarMembresiaPropia,
   actualizarMiembroSinCuenta,
+  activarRecuperacionRacha,
   crearGrupo,
   crearMiembroSinCuenta,
   desbloquearInsigniasRacha,
   editarQuedadaCompleta,
   eliminarGrupo,
   eliminarMembresia,
+  fallarRecuperacionRacha,
+  guardarRecuperacionPendiente,
+  pausarRecuperacionRacha,
+  reanudarRecuperacionRacha,
+  registrarPeriodoRecuperacionCumplido,
   registrarQuedadaCompleta,
 } from '../../src/infrastructure';
 import type { LaRachaSupabaseClient } from '../../src/infrastructure';
@@ -192,6 +198,130 @@ describe('mutaciones de Supabase', () => {
       {
         nombre: 'eliminar_membresia_mvp',
         args: { p_membresia_id: 'membresia-1' },
+      },
+    ]);
+  });
+
+  it('llama al RPC de guardar recuperacion pendiente', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: 'recuperacion-1', error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    const id = await guardarRecuperacionPendiente(supabase, {
+      grupoId: 'grupo-1',
+      rachaPerdidaPeriodos: 3,
+      fechaInicio: '2026-09-01',
+    });
+
+    expect(id).toBe('recuperacion-1');
+    expect(llamadas).toEqual([
+      {
+        nombre: 'guardar_recuperacion_pendiente_mvp',
+        args: {
+          p_grupo_id: 'grupo-1',
+          p_racha_perdida_periodos: 3,
+          p_fecha_inicio: '2026-09-01',
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de activar recuperacion', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await activarRecuperacionRacha(supabase, {
+      recuperacionId: 'recuperacion-1',
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'activar_recuperacion_racha_mvp',
+        args: {
+          p_recuperacion_id: 'recuperacion-1',
+        },
+      },
+    ]);
+  });
+
+  it('llama a los RPC de pausar y reanudar recuperacion', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await pausarRecuperacionRacha(supabase, 'recuperacion-1');
+    await reanudarRecuperacionRacha(supabase, 'recuperacion-1');
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'pausar_recuperacion_racha_mvp',
+        args: { p_recuperacion_id: 'recuperacion-1' },
+      },
+      {
+        nombre: 'reanudar_recuperacion_racha_mvp',
+        args: { p_recuperacion_id: 'recuperacion-1' },
+      },
+    ]);
+  });
+
+  it('llama al RPC de registrar periodo de recuperacion cumplido', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await registrarPeriodoRecuperacionCumplido(supabase, {
+      recuperacionId: 'recuperacion-1',
+      fechaFin: '2026-09-08',
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'registrar_periodo_recuperacion_cumplido_mvp',
+        args: {
+          p_recuperacion_id: 'recuperacion-1',
+          p_fecha_fin: '2026-09-08',
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de fallar recuperacion y devuelve el nuevo intento', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: 'recuperacion-2', error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    const nuevoId = await fallarRecuperacionRacha(supabase, {
+      recuperacionId: 'recuperacion-1',
+    });
+
+    expect(nuevoId).toBe('recuperacion-2');
+    expect(llamadas).toEqual([
+      {
+        nombre: 'fallar_recuperacion_racha_mvp',
+        args: {
+          p_recuperacion_id: 'recuperacion-1',
+        },
       },
     ]);
   });

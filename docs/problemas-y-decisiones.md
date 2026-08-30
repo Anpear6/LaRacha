@@ -604,3 +604,15 @@ Formato recomendado:
 **Solución aplicada:** renombrar las variables internas con prefijo `v_`: `v_tipo_plan_opcion_id`, `v_lugar_opcion_id` y `v_comida_opcion_id`.
 
 **Estado:** resuelto y validado contra Supabase real tras volver a ejecutar la migración `009`.
+
+## 56. Ciclo De Recuperación De Racha En Base De Datos
+
+**Problema:** la lógica de dominio ya sabía crear, activar, pausar, completar y fallar recuperaciones, pero faltaba una forma segura de guardar esos estados en Supabase.
+
+**Impacto:** sin operaciones cerradas, el frontend tendría que actualizar directamente `recuperaciones_racha`, con riesgo de dejar varios intentos activos, saltarse la activación del admin o no reiniciar correctamente una recuperación fallida.
+
+**Decisión actual:** crear funciones RPC específicas para el ciclo de recuperación del MVP.
+
+**Detalle:** al detectar pérdida se puede guardar una recuperación `pendiente`. Solo el admin puede activarla, pausarla o reanudarla. Si una recuperación falla, se marca como `fallida` y se crea automáticamente un nuevo intento `pendiente` con los mismos periodos necesarios, para respetar la regla de empezar otra vez desde cero.
+
+**Estado:** implementado y validado contra Supabase real.

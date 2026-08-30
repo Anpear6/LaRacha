@@ -434,6 +434,47 @@ export interface Database {
         };
         Returns: undefined;
       };
+      guardar_recuperacion_pendiente_mvp: {
+        Args: {
+          p_grupo_id: string;
+          p_racha_perdida_periodos: number;
+          p_fecha_inicio?: string;
+        };
+        Returns: string;
+      };
+      activar_recuperacion_racha_mvp: {
+        Args: {
+          p_recuperacion_id: string;
+          p_fecha_inicio?: string;
+        };
+        Returns: undefined;
+      };
+      pausar_recuperacion_racha_mvp: {
+        Args: {
+          p_recuperacion_id: string;
+        };
+        Returns: undefined;
+      };
+      reanudar_recuperacion_racha_mvp: {
+        Args: {
+          p_recuperacion_id: string;
+        };
+        Returns: undefined;
+      };
+      registrar_periodo_recuperacion_cumplido_mvp: {
+        Args: {
+          p_recuperacion_id: string;
+          p_fecha_fin?: string;
+        };
+        Returns: undefined;
+      };
+      fallar_recuperacion_racha_mvp: {
+        Args: {
+          p_recuperacion_id: string;
+          p_fecha_fin?: string;
+        };
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
