@@ -108,7 +108,8 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Crear script de comprobación para gestión de grupos y membresías.
 - [x] Ejecutar migración SQL para gestión de grupos y membresías.
 - [x] Validar gestión de grupos y membresías contra Supabase real.
-- [ ] Crear operaciones para crear opciones reutilizables por grupo.
+- [x] Crear operaciones para crear opciones reutilizables por grupo.
+- [x] Validar creación de opciones reutilizables contra Supabase real.
 - [x] Crear operación para registrar quedadas completas.
 - [x] Ejecutar migración SQL para registrar quedadas completas.
 - [x] Validar registro de quedada completa contra Supabase.
@@ -119,7 +120,7 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Crear operaciones para añadir fotos de quedada y objetos perdidos.
 - [x] Crear operaciones para consultar historial de quedadas.
 - [x] Crear operaciones para consultar racha e insignias.
-- [ ] Validar consulta de racha e insignias contra Supabase real.
+- [x] Validar consulta de racha e insignias contra Supabase real.
 - [x] Crear operaciones para guardar y gestionar recuperación de racha.
 - [x] Ejecutar migración SQL para operaciones de recuperación de racha.
 - [x] Validar recuperación de racha contra Supabase real.
@@ -222,4 +223,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Revisar la fase backend MVP y cerrar los últimos huecos antes de empezar el frontend.
+Revisar y preparar el salto al frontend MVP.

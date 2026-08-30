@@ -325,6 +325,14 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      obtener_o_crear_opcion_grupo: {
+        Args: {
+          p_grupo_id: string;
+          p_tipo: 'tipo_plan' | 'lugar' | 'comida';
+          p_valor: string;
+        };
+        Returns: string;
+      };
       registrar_quedada_completa_mvp: {
         Args: {
           p_grupo_id: string;

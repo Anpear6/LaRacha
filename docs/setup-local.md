@@ -135,6 +135,14 @@ npm run check:recuperacion-racha
 
 Este comando crea un grupo temporal, guarda una recuperación pendiente, la activa, registra un periodo cumplido, la pausa, la reanuda, la falla y comprueba que se cree un nuevo intento pendiente. Al final borra el grupo temporal.
 
+Para probar la creación explícita de opciones reutilizables por grupo:
+
+```bash
+npm run check:opciones-grupo
+```
+
+Este comando crea un grupo temporal, guarda opciones de comida, lugar y tipo de plan, comprueba que una opción repetida reutiliza el mismo ID y borra el grupo temporal al final.
+
 ## Punto De Expansion
 
 Mas adelante se podra automatizar este flujo con Supabase CLI o scripts de npm para no copiar migraciones manualmente.
