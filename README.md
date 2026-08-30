@@ -34,3 +34,5 @@ Para jóvenes de entre 16 y 30 años con grupos cerrados de 3 a 10 amigos que va
 ### 🤓 ¿Quieres ver las tripas del proyecto?
 
 Si eres un dev curioso, un inversor o simplemente te gusta el salseo técnico, puedes leer toda la arquitectura, el diseño del sistema y los modelos de datos en nuestra [Documentación de Requisitos (RPD)](docs/rpd.md).
+
+Para preparar el proyecto en local, consulta la [guía de setup local](docs/setup-local.md).

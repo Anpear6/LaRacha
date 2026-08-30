@@ -144,14 +144,19 @@ Sirve como puente entre `modelo-logico-mvp.md` y la migración inicial de Postgr
 - `racha_perdida_periodos` será obligatorio.
 - `periodos_necesarios` será obligatorio.
 - `periodos_completados` tendrá valor `0` por defecto.
-- `estado` tendrá valores `en_progreso`, `completada` y `fallida`.
-- `estado` tendrá valor `en_progreso` por defecto.
+- `estado` tendrá valores `pendiente`, `en_progreso`, `pausada`, `completada` y `fallida`.
+- `estado` tendrá valor `pendiente` por defecto.
 - `fecha_inicio` será obligatoria.
 - `fecha_fin` será opcional.
-- Un grupo solo puede tener una recuperación `en_progreso` al mismo tiempo.
+- Un grupo solo puede tener una recuperación activa al mismo tiempo. Estados activos: `pendiente`, `en_progreso` y `pausada`.
 - Si se borra un grupo, se borran sus recuperaciones.
 - Las recuperaciones completadas y fallidas se conservan como histórico.
 - Si una recuperación falla, una nueva recuperación empieza desde cero.
+- Si una racha se rompe, la recuperación queda pendiente hasta que el administrador decida reactivarla.
+- Mientras la recuperación no esté completada, la racha queda congelada y no se desbloquean insignias nuevas.
+- La racha solo puede romperse cuando termina el periodo que tocaba cumplir.
+- Si el periodo actual aún está abierto, no se debe crear una recuperación por adelantado.
+- La tregua de verano puede pausar una recuperación sin perder el progreso acumulado.
 
 ## Privacidad Y Permisos Iniciales
 

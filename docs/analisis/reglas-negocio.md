@@ -92,6 +92,10 @@ Las reglas de negocio describen condiciones y decisiones propias de La Racha.
 - RN-018: Si un periodo configurado no tiene quedadas válidas, la racha se rompe.
 - RN-019: La racha debe adaptarse a la vida real del grupo.
 - RN-020: Las frecuencias iniciales posibles son: dos veces por semana, una vez por semana, dos veces al mes, una vez al mes y seis veces al año.
+- RN-020A: La racha no se considera perdida hasta que termina el periodo que tocaba cumplir.
+- RN-020B: Si la semana, mes o año actual todavía está en curso, el sistema no debe romper la racha por adelantado.
+- RN-020C: Si el último periodo cerrado no se cumplió y antes existía una racha, el sistema detecta una pérdida de racha.
+- RN-020D: Si ya existe una recuperación activa, no se detecta una nueva pérdida de racha encima de la anterior.
 
 ## Tregua De Verano
 
@@ -111,11 +115,23 @@ Las reglas de negocio describen condiciones y decisiones propias de La Racha.
 - RN-026: El periodo usado para recuperar una racha no suma como nueva racha.
 - RN-026A: En el MVP, si se pierde una racha, el grupo podrá recuperarla quedando de forma consecutiva durante el tiempo equivalente a la racha perdida.
 - RN-026B: Ejemplo: si se pierde una racha de 3 semanas, el grupo deberá quedar durante las 3 semanas siguientes según su frecuencia para recuperarla.
-- RN-026C: Cuando se pierde una racha, el sistema crea una recuperación de racha para el grupo.
-- RN-026D: Una recuperación de racha tiene estado `en_progreso`, `completada` o `fallida`.
-- RN-026E: Un grupo no debería tener más de una recuperación de racha en progreso a la vez.
+- RN-026C: Cuando se pierde una racha, el sistema crea una recuperación de racha en estado `pendiente`.
+- RN-026D: Una recuperación de racha tiene estado `pendiente`, `en_progreso`, `pausada`, `completada` o `fallida`.
+- RN-026E: Un grupo no debería tener más de una recuperación de racha activa a la vez. Estados activos: `pendiente`, `en_progreso` y `pausada`.
 - RN-026F: Cada periodo válido durante la recuperación incrementa el progreso de la recuperación.
 - RN-026G: Las recuperaciones de racha se guardan para poder calcular estadísticas históricas.
+- RN-026H: La recuperación no empieza hasta que el administrador decide reactivar la racha.
+- RN-026I: Mientras la recuperación está pendiente, en progreso o pausada, la racha queda congelada y no se desbloquean insignias nuevas.
+- RN-026J: Si el grupo falla una recuperación, la recuperación pasa a `fallida` y el siguiente intento empieza desde cero.
+- RN-026K: La tregua de verano puede pausar una recuperación en progreso sin borrar su avance.
+
+## Insignias De Racha
+
+- RN-026L: Las insignias de racha se desbloquean según tiempo real de racha conseguido por el grupo.
+- RN-026M: La recuperación de una racha rota no cuenta como tiempo nuevo de racha.
+- RN-026N: Si un grupo tenía 2 semanas de racha, la pierde y tarda 2 semanas en recuperarla, al completarla vuelve a tener 2 semanas de racha; no desbloquea la insignia de 1 mes por el tiempo usado en recuperación.
+- RN-026O: Las frecuencias no semanales también desbloquean insignias según tiempo real. Un grupo mensual podrá conseguir hitos de 1 mes en adelante, pero no insignias semanales.
+- RN-026P: Una misma insignia de racha no se desbloquea dos veces para el mismo grupo.
 
 ## Highlights
 

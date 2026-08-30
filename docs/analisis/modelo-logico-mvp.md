@@ -272,6 +272,10 @@ Notas:
 - Las insignias son datos semilla del sistema.
 - Los usuarios no pueden crear, editar ni borrar insignias desde la app.
 - Las insignias semilla podrán usar una imagen por defecto mientras no exista su imagen definitiva.
+- El campo `criterio` identificará el hito temporal de racha: `1_semana`, `2_semanas`, `1_mes`, `3_meses`, `6_meses` o `1_anio`.
+- Las insignias se desbloquean según tiempo real de racha conseguido por el grupo.
+- El tiempo usado para recuperar una racha rota no desbloquea insignias nuevas.
+- Las frecuencias mensuales desbloquean hitos de 1 mes en adelante; no desbloquean insignias semanales.
 
 ## Tabla: insignias_desbloqueadas
 
@@ -323,19 +327,32 @@ Notas:
 - `racha_perdida_periodos` guarda cuántos periodos de racha tenía el grupo antes de perderla.
 - `periodos_necesarios` normalmente será igual a `racha_perdida_periodos`.
 - `periodos_completados` indica cuántos periodos válidos lleva el grupo dentro de la recuperación.
-- `estado` podrá tener valores: `en_progreso`, `completada`, `fallida`.
-- Un grupo no debería tener más de una recuperación con `estado = en_progreso` a la vez.
+- `estado` podrá tener valores: `pendiente`, `en_progreso`, `pausada`, `completada`, `fallida`.
+- `pendiente` significa que la racha está rota, pero el administrador todavía no ha decidido reactivar la recuperación.
+- `en_progreso` significa que el grupo ya está intentando recuperar la racha.
+- `pausada` se usará cuando una regla especial, como la tregua de verano, pause temporalmente la recuperación sin perder progreso.
+- Un grupo no debería tener más de una recuperación activa (`pendiente`, `en_progreso` o `pausada`) a la vez.
 - Esta tabla permitirá calcular estadísticas como cuántas veces se ha perdido la racha, cuántas recuperaciones se han completado y cuántos periodos se han invertido recuperando rachas.
 - Si una recuperación falla, se conserva en histórico y una nueva recuperación empieza desde cero.
 
 ## Reglas De Racha En El MVP
 
 - Una quedada cuenta para racha si pertenece al grupo, cumple la frecuencia configurada y tiene al menos 3 asistencias con `estado = asistio`.
-- Si un grupo pierde una racha, podrá recuperarla quedando de forma consecutiva durante el tiempo equivalente a la racha perdida.
+- La racha no se considera perdida hasta que termina el periodo que tocaba cumplir.
+- Si el periodo actual todavía está abierto, la app espera antes de romper la racha.
+- Si el último periodo cerrado no se cumplió y antes existía una racha, se detecta una pérdida.
+- Si ya existe una recuperación activa, no se crea otra pérdida encima.
+- Si un grupo pierde una racha, se crea una recuperación en estado `pendiente`.
+- La recuperación no empieza hasta que el administrador decide reactivarla.
+- Cuando el administrador reactiva la recuperación, el grupo podrá recuperarla quedando de forma consecutiva durante el tiempo equivalente a la racha perdida.
 - Ejemplo: si se pierde una racha de 3 semanas, el grupo debe quedar durante las 3 semanas siguientes según su frecuencia.
 - El periodo usado para recuperar la racha no suma como racha nueva.
-- Cuando se pierde una racha, se crea una fila en `recuperaciones_racha`.
+- Cuando se pierde una racha, se crea una fila en `recuperaciones_racha` con `estado = pendiente`.
 - Cada periodo válido completado durante la recuperación incrementa `periodos_completados`.
 - Si `periodos_completados` alcanza `periodos_necesarios`, la recuperación pasa a `completada`.
 - Si el grupo falla durante la recuperación, la recuperación pasa a `fallida`.
-- La tregua de verano queda representada por `tregua_verano_activa`, pero sus reglas avanzadas se implementarán después del primer cálculo básico de racha.
+- Si una recuperación falla, el grupo debe volver a completar todos los periodos necesarios desde cero.
+- Mientras la recuperación esté `pendiente`, `en_progreso` o `pausada`, la racha queda congelada y no se desbloquean insignias nuevas.
+- La tregua de verano puede pausar una recuperación en progreso sin borrar su avance.
+- Al completar una recuperación, el grupo recupera la racha que ya tenía, pero el periodo usado para recuperarla no suma como progreso nuevo.
+- Las insignias de racha solo se desbloquean si no existe una recuperación activa y el tiempo real de racha alcanza el hito correspondiente.
