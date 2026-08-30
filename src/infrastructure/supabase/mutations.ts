@@ -1,9 +1,15 @@
-import type { DatosNuevaInsigniaDesbloqueada, FrecuenciaRacha, MomentoDia } from '../../domain';
+import type {
+  DatosNuevaInsigniaDesbloqueada,
+  FrecuenciaRacha,
+  MomentoDia,
+  TipoOpcionGrupo,
+} from '../../domain';
 import type { LaRachaSupabaseClient } from './client';
 import type { Database, Json } from './database.types';
 
 type RegistrarQuedadaCompletaArgs =
   Database['public']['Functions']['registrar_quedada_completa_mvp']['Args'];
+type CrearOpcionGrupoArgs = Database['public']['Functions']['obtener_o_crear_opcion_grupo']['Args'];
 type EditarQuedadaCompletaArgs =
   Database['public']['Functions']['editar_quedada_completa_mvp']['Args'];
 type DesbloquearInsigniasRachaArgs =
@@ -28,6 +34,12 @@ type FallarRecuperacionRachaArgs =
 export interface FotoNuevaQuedada {
   url: string;
   descripcion?: string;
+}
+
+export interface CrearOpcionGrupoInput {
+  grupoId: string;
+  tipo: TipoOpcionGrupo;
+  valor: string;
 }
 
 export interface RegistrarQuedadaCompletaInput {
@@ -146,6 +158,25 @@ export async function registrarQuedadaCompleta(
 
   if (error) {
     throw new Error(`No se pudo registrar la quedada: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function crearOpcionGrupo(
+  supabase: LaRachaSupabaseClient,
+  input: CrearOpcionGrupoInput,
+): Promise<string> {
+  const args: CrearOpcionGrupoArgs = {
+    p_grupo_id: input.grupoId,
+    p_tipo: input.tipo,
+    p_valor: input.valor,
+  };
+
+  const { data, error } = await supabase.rpc('obtener_o_crear_opcion_grupo', args);
+
+  if (error) {
+    throw new Error(`No se pudo crear la opcion del grupo: ${error.message}`);
   }
 
   return data;

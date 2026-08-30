@@ -13,7 +13,8 @@
     "check:desbloquear-insignias": "tsx scripts/check-desbloquear-insignias.ts",
     "check:gestion-grupos": "tsx scripts/check-gestion-grupos-membresias.ts",
     "check:editar-quedada": "tsx scripts/check-editar-quedada.ts",
-    "check:recuperacion-racha": "tsx scripts/check-recuperacion-racha.ts"
+    "check:recuperacion-racha": "tsx scripts/check-recuperacion-racha.ts",
+    "check:opciones-grupo": "tsx scripts/check-opciones-grupo.ts"
   },
   "devDependencies": {
     "@types/node": "^26.4.0",

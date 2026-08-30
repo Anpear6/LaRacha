@@ -616,3 +616,15 @@ Formato recomendado:
 **Detalle:** al detectar pérdida se puede guardar una recuperación `pendiente`. Solo el admin puede activarla, pausarla o reanudarla. Si una recuperación falla, se marca como `fallida` y se crea automáticamente un nuevo intento `pendiente` con los mismos periodos necesarios, para respetar la regla de empezar otra vez desde cero.
 
 **Estado:** implementado y validado contra Supabase real.
+
+## 57. Operación Explícita Para Opciones Reutilizables
+
+**Problema:** las opciones reutilizables de comida, lugar y tipo de plan ya se creaban automáticamente al registrar o editar una quedada, pero el frontend también puede necesitar crear una opción desde un control concreto.
+
+**Impacto:** sin una operación propia, la interfaz tendría que depender de registrar una quedada para crear opciones, o duplicar lógica de normalización y reutilización.
+
+**Decisión actual:** exponer la función SQL `obtener_o_crear_opcion_grupo` mediante la operación TypeScript `crearOpcionGrupo`.
+
+**Detalle:** no hace falta una migración nueva porque la función SQL ya existe desde `006_registrar_quedada_completa.sql`. La operación devuelve el ID existente si la opción ya estaba creada, evitando duplicados por diferencias de mayúsculas/minúsculas.
+
+**Estado:** implementado y validado contra Supabase real con `npm run check:opciones-grupo`.

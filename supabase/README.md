@@ -90,6 +90,14 @@ Para probarla desde el proyecto:
 npm run check:registrar-quedada
 ```
 
+`obtener_o_crear_opcion_grupo` guarda una opcion reutilizable para un grupo o devuelve la existente si ya estaba creada. La usa internamente el registro/edicion de quedadas y tambien la operacion TypeScript `crearOpcionGrupo`.
+
+Para probarla desde el proyecto:
+
+```bash
+npm run check:opciones-grupo
+```
+
 `desbloquear_insignias_racha_mvp` guarda las insignias de racha que la lógica de dominio ya ha calculado como desbloqueables:
 
 - valida que el usuario autenticado pertenezca al grupo;

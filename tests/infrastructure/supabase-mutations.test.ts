@@ -6,6 +6,7 @@ import {
   activarRecuperacionRacha,
   crearGrupo,
   crearMiembroSinCuenta,
+  crearOpcionGrupo,
   desbloquearInsigniasRacha,
   editarQuedadaCompleta,
   eliminarGrupo,
@@ -20,6 +21,34 @@ import {
 import type { LaRachaSupabaseClient } from '../../src/infrastructure';
 
 describe('mutaciones de Supabase', () => {
+  it('llama al RPC de obtener o crear opcion de grupo', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: 'opcion-1', error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    const id = await crearOpcionGrupo(supabase, {
+      grupoId: 'grupo-1',
+      tipo: 'comida',
+      valor: 'pizza',
+    });
+
+    expect(id).toBe('opcion-1');
+    expect(llamadas).toEqual([
+      {
+        nombre: 'obtener_o_crear_opcion_grupo',
+        args: {
+          p_grupo_id: 'grupo-1',
+          p_tipo: 'comida',
+          p_valor: 'pizza',
+        },
+      },
+    ]);
+  });
+
   it('llama al RPC de crear grupo con membresia admin inicial', async () => {
     const llamadas: unknown[] = [];
     const supabase = {
