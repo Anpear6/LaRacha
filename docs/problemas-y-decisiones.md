@@ -556,3 +556,27 @@ Formato recomendado:
 **Solución aplicada:** leer las insignias guardadas con `listarInsigniasDesbloqueadasGrupo` y ampliar `tsconfig.json` para incluir también `scripts/**/*.ts`.
 
 **Estado:** resuelto.
+
+## 52. Gestión De Grupos Y Membresías Como Operaciones Cerradas
+
+**Problema:** crear o modificar grupos y membresías toca permisos delicados: quién es admin, quién puede editar miembros sin cuenta, cómo se conserva el histórico y cómo se evita cambiar la frecuencia de racha después de crear el grupo.
+
+**Impacto:** si el frontend hiciera inserciones y updates sueltos, sería fácil saltarse una regla por accidente. Por ejemplo, editar el rol admin, borrar una membresía con histórico o cambiar la frecuencia de racha cuando ya hay partida empezada.
+
+**Decisión actual:** crear funciones RPC específicas para cada operación del MVP: crear grupo, actualizar grupo, eliminar grupo, crear miembro sin cuenta, actualizar membresía propia, actualizar miembro sin cuenta y eliminar membresía.
+
+**Detalle:** eliminar una membresía no borra sus datos históricos; solo cambia `estado` a `eliminada`. La operación de eliminar membresía rechaza borrar la membresía admin.
+
+**Estado:** implementado y validado contra Supabase real.
+
+## 53. Crear Grupo Con RLS Y `RETURNING`
+
+**Problema:** al validar `crear_grupo_mvp` contra Supabase real, la inserción del grupo falló con una violación de RLS en la tabla `grupos`.
+
+**Causa:** la función creaba el grupo con `insert ... returning id`. Para devolver la fila recién creada, PostgreSQL necesitaba aplicar también la política de lectura. Pero en ese momento aún no existía la membresía admin, así que la política `grupos_select_miembro` no dejaba ver el grupo recién insertado.
+
+**Impacto:** el usuario autenticado sí tenía permiso para crear el grupo, pero no podía leerlo durante esa misma operación antes de crear su membresía.
+
+**Solución aplicada:** generar los UUIDs del grupo y de la membresía antes de insertar. Así la función no necesita `returning` en esas inserciones: inserta el grupo, inserta la membresía admin con IDs ya conocidos y devuelve esos IDs al final.
+
+**Estado:** resuelto y validado contra Supabase real tras volver a ejecutar la migración `008`.

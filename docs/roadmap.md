@@ -100,10 +100,14 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Ejecutar comprobación con login real.
 - [ ] Crear flujo básico de autenticación en la app.
 - [x] Crear operaciones para leer grupos de un usuario.
-- [ ] Crear operaciones para crear y editar grupos.
+- [x] Crear operaciones para crear y editar grupos.
+- [x] Crear operación para eliminar grupos.
 - [x] Crear operaciones para leer membresías de un grupo.
 - [x] Crear operaciones para leer opciones reutilizables por grupo.
-- [ ] Crear operaciones para gestionar membresías.
+- [x] Crear operaciones para gestionar membresías.
+- [x] Crear script de comprobación para gestión de grupos y membresías.
+- [x] Ejecutar migración SQL para gestión de grupos y membresías.
+- [x] Validar gestión de grupos y membresías contra Supabase real.
 - [ ] Crear operaciones para crear opciones reutilizables por grupo.
 - [x] Crear operación para registrar quedadas completas.
 - [x] Ejecutar migración SQL para registrar quedadas completas.
@@ -213,4 +217,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Crear operaciones básicas para gestionar grupos y membresías desde el backend.
+Crear operaciones transaccionales para editar quedadas completas.

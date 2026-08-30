@@ -45,6 +45,7 @@ Orden actual de migraciones:
 5. `supabase/migrations/005_recovery_pending_and_paused_states.sql`
 6. `supabase/migrations/006_registrar_quedada_completa.sql`
 7. `supabase/migrations/007_desbloquear_insignias_racha.sql`
+8. `supabase/migrations/008_gestion_grupos_membresias.sql`
 
 Los datos semilla están en:
 
@@ -107,6 +108,14 @@ npm run check:desbloquear-insignias
 ```
 
 Este comando pide login, muestra cuántas insignias se pueden desbloquear y exige escribir `SI` antes de guardarlas en Supabase.
+
+Para probar la gestión básica de grupos y membresías:
+
+```bash
+npm run check:gestion-grupos
+```
+
+Este comando crea un grupo temporal, edita el grupo, edita la membresía propia, crea un miembro sin cuenta, lo edita, lo elimina lógicamente y al final pregunta si se quiere borrar el grupo temporal.
 
 ## Punto De Expansion
 
