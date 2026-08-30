@@ -1,6 +1,14 @@
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import { createLaRachaSupabaseClient } from '../src/infrastructure';
+import {
+  createLaRachaSupabaseClient,
+  listarHistorialQuedadasGrupo,
+  listarGruposUsuarioActual,
+  listarMembresiasGrupo,
+  listarOpcionesGrupo,
+  obtenerEstadoRachaGrupo,
+  obtenerUsuarioActual,
+} from '../src/infrastructure';
 import { leerEnvLocal, leerVariable } from './env';
 
 const env = leerEnvLocal();
@@ -24,35 +32,39 @@ try {
     throw new Error(`No se pudo iniciar sesion: ${authError.message}`);
   }
 
-  const userId = authData.user.id;
+  const usuario = await obtenerUsuarioActual(supabase);
 
-  const { data: usuario, error: usuarioError } = await supabase
-    .from('usuarios')
-    .select('id, nombre, username, email')
-    .eq('id', userId)
-    .single();
-
-  if (usuarioError) {
-    throw new Error(`No se pudo leer el usuario autenticado: ${usuarioError.message}`);
+  if (!usuario) {
+    throw new Error('El login funciono, pero no existe un perfil en la tabla usuarios.');
   }
 
-  const { data: membresias, error: membresiasError } = await supabase
-    .from('membresias')
-    .select('id, apodo, rol, estado, grupos(id, nombre)')
-    .eq('usuario_id', userId)
-    .order('fecha_entrada');
-
-  if (membresiasError) {
-    throw new Error(`No se pudieron leer membresias: ${membresiasError.message}`);
-  }
+  const grupos = await listarGruposUsuarioActual(supabase);
 
   console.log('Login correcto.');
   console.log(`Usuario: ${usuario.nombre} (${usuario.username ?? 'sin username'})`);
-  console.log(`Membresias visibles: ${membresias.length}`);
+  console.log(`Grupos visibles: ${grupos.length}`);
 
-  for (const membresia of membresias) {
-    const grupo = Array.isArray(membresia.grupos) ? membresia.grupos[0] : membresia.grupos;
-    console.log(`- ${membresia.apodo} en ${grupo?.nombre ?? 'grupo desconocido'} [${membresia.rol}]`);
+  for (const { grupo, membresia } of grupos) {
+    console.log(`- ${membresia.apodo} en ${grupo.nombre} [${membresia.rol}]`);
+  }
+
+  const primerGrupo = grupos[0]?.grupo;
+
+  if (primerGrupo) {
+    const [membresiasGrupo, opcionesGrupo, historial, estadoRacha] = await Promise.all([
+      listarMembresiasGrupo(supabase, primerGrupo.id),
+      listarOpcionesGrupo(supabase, primerGrupo.id),
+      listarHistorialQuedadasGrupo(supabase, primerGrupo.id),
+      obtenerEstadoRachaGrupo(supabase, primerGrupo.id),
+    ]);
+
+    console.log(`Miembros visibles en ${primerGrupo.nombre}: ${membresiasGrupo.length}`);
+    console.log(`Opciones reutilizables visibles: ${opcionesGrupo.length}`);
+    console.log(`Quedadas visibles: ${historial.length}`);
+    console.log(`Racha visible: ${estadoRacha.estadoRacha.rachaVisible.valorActual}`);
+    console.log(
+      `Insignias desbloqueables ahora: ${estadoRacha.estadoRacha.insigniasDesbloqueables.length}`,
+    );
   }
 } finally {
   rl.close();

@@ -448,3 +448,111 @@ Formato recomendado:
 **Decisión actual:** crear un script de comprobación autenticada que pide email y contraseña por terminal en tiempo de ejecución. El script usa Supabase Auth, lee los datos visibles para ese usuario y no guarda la contraseña.
 
 **Estado:** implementado y ejecutado correctamente con usuario real.
+
+## 42. Tipos Manuales De Supabase E Inferencia `never`
+
+**Problema:** al crear la primera operación para leer grupos del usuario actual, TypeScript infirió una consulta de Supabase como `never` en una zona concreta.
+
+**Causa:** los tipos de base de datos actuales están escritos manualmente. Sirven para avanzar, pero no tienen toda la información que generan automáticamente las herramientas oficiales de Supabase.
+
+**Impacto:** la lógica era correcta, pero el compilador no podía inferir bien el tipo de una respuesta. Esto puede repetirse mientras usemos tipos manuales.
+
+**Solución aplicada:** tipar explícitamente las filas de `grupos` en esa operación concreta. Como punto de mejora futuro, conviene generar los tipos oficiales con Supabase CLI cuando automaticemos migraciones.
+
+**Estado:** resuelto.
+
+## 43. Validación Interactiva De Operaciones Autenticadas
+
+**Problema:** para validar las nuevas operaciones de lectura con RLS hay que iniciar sesión desde terminal, y eso requiere que la usuaria escriba email y contraseña.
+
+**Impacto:** Codex no debe conocer ni guardar contraseñas. La comprobación no puede completarse sin intervención humana.
+
+**Decisión actual:** dejar las operaciones implementadas y los tests pasando. La validación interactiva se ejecutará cuando la usuaria esté delante de la terminal y pueda introducir credenciales.
+
+**Estado:** resuelto. La comprobación autenticada se ejecutó correctamente con el usuario de Fran, que pudo ver su membresía en el grupo `Hermanitos`.
+
+## 44. Primeras Operaciones De Lectura Del Backend
+
+**Problema:** la app necesita dejar de hacer consultas sueltas desde scripts y empezar a tener operaciones reutilizables para el backend y el futuro frontend.
+
+**Impacto:** si cada pantalla consulta Supabase a su manera, será más difícil mantener permisos, mapeos y errores consistentes.
+
+**Decisión actual:** crear operaciones de lectura para usuario actual, membresías del usuario, grupos del usuario, miembros activos de un grupo, opciones reutilizables e historial de quedadas con asistencias, fotos y objetos perdidos.
+
+**Estado:** implementado y validado con login real.
+
+## 45. Registrar Quedada Completa Como Transacción
+
+**Problema:** registrar una quedada no es una sola inserción. Puede crear opciones reutilizables, la quedada, asistencias automáticas, fotos y objetos perdidos.
+
+**Impacto:** si una parte se guarda y otra falla, la base de datos puede quedar incoherente. Por ejemplo, podría existir una quedada sin asistencias, o una opción creada sin que se cree la quedada.
+
+**Decisión actual:** crear una función SQL `registrar_quedada_completa_mvp` para que PostgreSQL ejecute todo dentro de una misma transacción. La app llamará esa función mediante RPC desde Supabase.
+
+**Detalle:** la función usa la sesión autenticada y las políticas RLS existentes. Las opciones de `tipo_plan`, `lugar` y `comida` se crean automáticamente si no existían para ese grupo.
+
+**Estado:** migración ejecutada y escritura real validada desde script.
+
+## 46. Tipos Manuales De Supabase Y RPC
+
+**Problema:** al añadir la primera función RPC, el cliente de Supabase no reconocía los argumentos porque nuestros tipos manuales no tenían la misma forma que los tipos generados oficialmente.
+
+**Causa:** faltaban `Relationships` en las tablas y algunas tablas usaban `Update: never`, lo que impedía que el esquema manual encajara completamente con lo que espera `@supabase/supabase-js`.
+
+**Solución aplicada:** completar los tipos manuales con `Relationships: []` y representar tablas no editables con `Update: Record<string, never>`.
+
+**Estado:** resuelto.
+
+## 47. Consulta De Estado De Racha Desde Supabase
+
+**Problema:** la lógica de racha ya existía en TypeScript, pero necesitábamos conectarla con las quedadas reales guardadas en Supabase.
+
+**Impacto:** sin esta operación, el futuro frontend podría mostrar historial de quedadas, pero no tendría una forma clara de calcular racha visible, recuperación activa e insignias desbloqueables usando datos reales.
+
+**Decisión actual:** crear una operación de lectura que cargue grupo, historial de quedadas, catálogo de insignias, insignias ya desbloqueadas y recuperación activa. Con esos datos, la infraestructura llama a la función de dominio `resolverEstadoRachaGrupo`.
+
+**Estado:** implementado. Queda pendiente validarlo con Supabase real mediante el script autenticado.
+
+## 48. Importar Tipos Y Valores En TypeScript
+
+**Problema:** al añadir la operación anterior, `resolverEstadoRachaGrupo` se importó junto con tipos usando `import type`.
+
+**Causa:** `import type` solo sirve para entidades que desaparecen al compilar. `resolverEstadoRachaGrupo` es una función real que se ejecuta en tiempo de ejecución, así que no puede importarse como si fuera solo un tipo.
+
+**Solución aplicada:** separar los imports: los modelos se importan con `import type` y la función `resolverEstadoRachaGrupo` se importa como valor normal.
+
+**Estado:** resuelto.
+
+## 49. Guardar Insignias Desbloqueadas Sin Duplicarlas
+
+**Problema:** la lógica puede detectar que un grupo ha conseguido una o varias insignias, pero guardar ese resultado directamente desde distintas pantallas podría crear duplicados o datos inconsistentes.
+
+**Impacto:** el salón de la fama depende de que una insignia de racha se desbloquee una sola vez por grupo. Si se insertan duplicados, las estadísticas y la vista de logros se vuelven confusas.
+
+**Decisión actual:** crear la función SQL `desbloquear_insignias_racha_mvp`, que recibe los desbloqueos calculados, valida grupo, insignias y membresías, y usa el índice único `grupo_id + insignia_id` para evitar duplicados.
+
+**Detalle:** la operación TypeScript `desbloquearInsigniasRacha` llama a esa RPC. La lógica que decide qué insignias se pueden desbloquear sigue viviendo en el dominio; la base de datos solo valida y guarda.
+
+**Estado:** implementado en código y migración `007` ejecutada en Supabase real.
+
+## 50. Validar Guardado De Insignias Con Confirmación Manual
+
+**Problema:** guardar insignias desbloqueadas cambia datos reales de Supabase, así que no conviene hacerlo automáticamente desde una comprobación genérica.
+
+**Impacto:** un script demasiado automático podría insertar logros mientras solo se estaba intentando leer o depurar el estado de la racha.
+
+**Decisión actual:** crear `npm run check:desbloquear-insignias`, un script separado que inicia sesión, calcula las insignias desbloqueables, muestra lo que va a guardar y exige escribir `SI` antes de llamar a la RPC.
+
+**Estado:** implementado y validado contra Supabase real.
+
+## 51. Scripts Fuera De La Comprobación De Tipos
+
+**Problema:** el script de comprobación de desbloqueo de insignias intentaba mostrar las insignias ya guardadas desde el resultado de racha, pero ese dato no vive ahí.
+
+**Causa:** `tsconfig.json` solo incluía `src/**/*.ts` y `tests/**/*.ts`, así que los scripts de `scripts/**/*.ts` no se revisaban con `npm run typecheck`.
+
+**Impacto:** un error de tipos podía colarse en scripts manuales aunque la comprobación general del proyecto saliera en verde.
+
+**Solución aplicada:** leer las insignias guardadas con `listarInsigniasDesbloqueadasGrupo` y ampliar `tsconfig.json` para incluir también `scripts/**/*.ts`.
+
+**Estado:** resuelto.

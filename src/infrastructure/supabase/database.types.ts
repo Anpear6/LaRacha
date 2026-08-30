@@ -29,6 +29,7 @@ export interface Database {
           avatar_global_url?: string | null;
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
       grupos: {
         Row: {
@@ -71,6 +72,7 @@ export interface Database {
           tregua_verano_activa?: boolean;
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
       membresias: {
         Row: {
@@ -103,6 +105,7 @@ export interface Database {
           estado?: 'activa' | 'eliminada';
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
       opciones_grupo: {
         Row: {
@@ -122,6 +125,7 @@ export interface Database {
         Update: {
           valor?: string;
         };
+        Relationships: [];
       };
       quedadas: {
         Row: {
@@ -177,6 +181,7 @@ export interface Database {
           notas?: string | null;
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
       fotos_quedada: {
         Row: {
@@ -197,6 +202,7 @@ export interface Database {
           url?: string;
           descripcion?: string | null;
         };
+        Relationships: [];
       };
       objetos_perdidos: {
         Row: {
@@ -216,6 +222,7 @@ export interface Database {
         Update: {
           descripcion?: string | null;
         };
+        Relationships: [];
       };
       asistencias: {
         Row: {
@@ -238,6 +245,7 @@ export interface Database {
           estado?: 'asistio' | 'no_asistio';
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
       insignias: {
         Row: {
@@ -258,7 +266,8 @@ export interface Database {
           imagen_url: string;
           fecha_creacion?: string;
         };
-        Update: never;
+        Update: Record<string, never>;
+        Relationships: [];
       };
       insignias_desbloqueadas: {
         Row: {
@@ -277,7 +286,8 @@ export interface Database {
           fecha_desbloqueo?: string;
           fecha_creacion?: string;
         };
-        Update: never;
+        Update: Record<string, never>;
+        Relationships: [];
       };
       recuperaciones_racha: {
         Row: {
@@ -310,10 +320,38 @@ export interface Database {
           fecha_fin?: string | null;
           fecha_actualizacion?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      registrar_quedada_completa_mvp: {
+        Args: {
+          p_grupo_id: string;
+          p_titulo: string;
+          p_creada_por_membresia_id: string;
+          p_fecha?: string;
+          p_conductor_membresia_id?: string | null;
+          p_tipo_plan_texto?: string | null;
+          p_momento_dia?: 'manana' | 'tarde' | 'tarde_noche' | 'noche' | 'dia_completo' | null;
+          p_lugar_texto?: string | null;
+          p_comida_texto?: string | null;
+          p_duracion_minutos?: number | null;
+          p_notas?: string | null;
+          p_asistentes_membresia_ids?: string[];
+          p_objetos_perdidos_membresia_ids?: string[];
+          p_fotos?: Json;
+        };
+        Returns: string;
+      };
+      desbloquear_insignias_racha_mvp: {
+        Args: {
+          p_grupo_id: string;
+          p_desbloqueos?: Json;
+        };
+        Returns: string[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

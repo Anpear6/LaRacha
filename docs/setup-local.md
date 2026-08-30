@@ -43,6 +43,8 @@ Orden actual de migraciones:
 3. `supabase/migrations/003_align_seed_users_with_auth.sql`
 4. `supabase/migrations/004_rls_policies.sql`
 5. `supabase/migrations/005_recovery_pending_and_paused_states.sql`
+6. `supabase/migrations/006_registrar_quedada_completa.sql`
+7. `supabase/migrations/007_desbloquear_insignias_racha.sql`
 
 Los datos semilla están en:
 
@@ -81,6 +83,30 @@ npm run check:supabase:auth
 Este comando pide email y contraseña en la terminal. No guarda la contraseña en archivos ni en Git.
 
 Con RLS activo, un usuario autenticado solo deberia ver su propio usuario y las membresias/grupos a los que pertenece.
+
+Para probar el registro de una quedada completa:
+
+```bash
+npm run check:registrar-quedada
+```
+
+Este comando pide login, muestra lo que va a insertar y exige escribir `SI` antes de crear la quedada de prueba.
+
+Para validar el cálculo de racha e insignias contra datos reales, vuelve a ejecutar:
+
+```bash
+npm run check:supabase:auth
+```
+
+La salida debe mostrar, además de usuario, grupos, miembros y quedadas, el resumen de racha visible y cuántas insignias son desbloqueables.
+
+Para probar el guardado de insignias desbloqueadas:
+
+```bash
+npm run check:desbloquear-insignias
+```
+
+Este comando pide login, muestra cuántas insignias se pueden desbloquear y exige escribir `SI` antes de guardarlas en Supabase.
 
 ## Punto De Expansion
 

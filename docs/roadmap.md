@@ -99,16 +99,26 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Crear script de comprobación con login real.
 - [x] Ejecutar comprobación con login real.
 - [ ] Crear flujo básico de autenticación en la app.
-- [ ] Crear operaciones para leer grupos de un usuario.
+- [x] Crear operaciones para leer grupos de un usuario.
 - [ ] Crear operaciones para crear y editar grupos.
+- [x] Crear operaciones para leer membresías de un grupo.
+- [x] Crear operaciones para leer opciones reutilizables por grupo.
 - [ ] Crear operaciones para gestionar membresías.
 - [ ] Crear operaciones para crear opciones reutilizables por grupo.
-- [ ] Crear operaciones para registrar quedadas.
+- [x] Crear operación para registrar quedadas completas.
+- [x] Ejecutar migración SQL para registrar quedadas completas.
+- [x] Validar registro de quedada completa contra Supabase.
 - [ ] Crear operaciones transaccionales para editar quedadas.
-- [ ] Crear operaciones para generar asistencias.
+- [x] Crear operación transaccional para generar asistencias al registrar quedada.
 - [ ] Crear operaciones para añadir fotos de quedada y objetos perdidos.
-- [ ] Crear operaciones para consultar historial de quedadas.
-- [ ] Crear operaciones para consultar racha e insignias.
+- [x] Crear operaciones para consultar historial de quedadas.
+- [x] Crear operaciones para consultar racha e insignias.
+- [ ] Validar consulta de racha e insignias contra Supabase real.
+- [x] Crear operación para guardar insignias de racha desbloqueadas.
+- [x] Ejecutar migración SQL para guardar insignias de racha desbloqueadas.
+- [x] Validar guardado de insignias de racha contra Supabase real.
+- [x] Crear script de comprobación para guardar insignias desbloqueadas con confirmación.
+- [x] Validar operaciones de lectura desde script autenticado.
 
 ## Fase 5 - Frontend MVP
 
@@ -203,4 +213,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Seguir con la lógica de dominio: preparar la operación de aplicación que recalcula racha, recuperación e insignias al registrar o editar una quedada.
+Crear operaciones básicas para gestionar grupos y membresías desde el backend.

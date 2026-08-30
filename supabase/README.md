@@ -9,6 +9,8 @@ Esta carpeta contiene la parte de base de datos de La Racha.
 - `migrations/003_align_seed_users_with_auth.sql`: alinea los usuarios semilla con los UUID reales de Supabase Auth.
 - `migrations/004_rls_policies.sql`: activa RLS y define las politicas iniciales de privacidad del MVP.
 - `migrations/005_recovery_pending_and_paused_states.sql`: actualiza los estados de recuperacion de racha para permitir recuperaciones pendientes y pausadas.
+- `migrations/006_registrar_quedada_completa.sql`: crea una funcion transaccional para registrar una quedada completa desde la app.
+- `migrations/007_desbloquear_insignias_racha.sql`: crea una funcion transaccional para guardar insignias de racha desbloqueadas sin duplicarlas.
 
 ## Datos Semilla
 
@@ -22,7 +24,7 @@ El esquema esta escrito para PostgreSQL/Supabase.
 
 Las rutas de imagen guardadas en el seed son referencias locales del repositorio. Mas adelante, para que se vean en la app desplegada, habra que mover esas imagenes a `public/` o subirlas a Supabase Storage.
 
-Las migraciones `001`, `002`, `003`, `004` y `005` se han preparado para ejecutarse en orden desde el SQL Editor de Supabase durante el aprendizaje inicial del proyecto.
+Las migraciones se han preparado para ejecutarse en orden desde el SQL Editor de Supabase durante el aprendizaje inicial del proyecto.
 
 Antes de probar permisos con login real, los usuarios semilla deben estar alineados con los UUID reales de Supabase Auth, porque las politicas comparan `usuarios.id` con `auth.uid()`. Para los datos semilla actuales, ese ajuste esta en `migrations/003_align_seed_users_with_auth.sql`.
 
@@ -64,3 +66,40 @@ npm run check:supabase:auth
 Este comando pide email y contraseña en la terminal y permite validar que las politicas RLS dejan ver solo los datos del usuario autenticado.
 
 La comprobacion autenticada ya se ha ejecutado correctamente al menos con un usuario real.
+
+## Funciones RPC
+
+`registrar_quedada_completa_mvp` registra una quedada completa en una transaccion:
+
+- crea opciones reutilizables si son nuevas para el grupo;
+- crea la quedada;
+- crea una asistencia para cada membresia activa;
+- marca como `asistio` solo a las membresias seleccionadas;
+- marca como `no_asistio` al resto;
+- crea fotos de quedada;
+- crea objetos perdidos.
+
+Esta funcion debe existir en Supabase antes de usar la operacion TypeScript `registrarQuedadaCompleta`.
+
+Para probarla desde el proyecto:
+
+```bash
+npm run check:registrar-quedada
+```
+
+`desbloquear_insignias_racha_mvp` guarda las insignias de racha que la lógica de dominio ya ha calculado como desbloqueables:
+
+- valida que el usuario autenticado pertenezca al grupo;
+- valida que las insignias existan y sean de tipo `racha_grupo`;
+- valida que la membresia asociada pertenezca al mismo grupo;
+- evita duplicados mediante el índice único `grupo_id + insignia_id`.
+
+Esta funcion debe existir en Supabase antes de usar la operacion TypeScript `desbloquearInsigniasRacha`.
+
+Para probarla desde el proyecto:
+
+```bash
+npm run check:desbloquear-insignias
+```
+
+El script muestra los desbloqueos calculados y pide confirmacion antes de insertar nada.
