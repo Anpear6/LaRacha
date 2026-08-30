@@ -47,6 +47,7 @@ Orden actual de migraciones:
 7. `supabase/migrations/007_desbloquear_insignias_racha.sql`
 8. `supabase/migrations/008_gestion_grupos_membresias.sql`
 9. `supabase/migrations/009_editar_quedada_completa.sql`
+10. `supabase/migrations/010_operaciones_recuperacion_racha.sql`
 
 Los datos semilla están en:
 
@@ -125,6 +126,14 @@ npm run check:editar-quedada
 ```
 
 Este comando crea una quedada de prueba, la edita en una transacción y luego lee el historial para comprobar el resultado. La quedada queda guardada, porque en el MVP no se borran quedadas registradas.
+
+Para probar la recuperación de racha:
+
+```bash
+npm run check:recuperacion-racha
+```
+
+Este comando crea un grupo temporal, guarda una recuperación pendiente, la activa, registra un periodo cumplido, la pausa, la reanuda, la falla y comprueba que se cree un nuevo intento pendiente. Al final borra el grupo temporal.
 
 ## Punto De Expansion
 

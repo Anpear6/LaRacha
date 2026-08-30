@@ -4,23 +4,33 @@ export { createLaRachaSupabaseClient, getSupabaseConfigFromEnv } from './client'
 export type {
   ActualizarGrupoInput,
   ActualizarMembresiaPerfilInput,
+  ActivarRecuperacionRachaInput,
   CrearGrupoInput,
   CrearMiembroSinCuentaInput,
   EditarQuedadaCompletaInput,
+  FallarRecuperacionRachaInput,
   FotoNuevaQuedada,
   GrupoCreado,
+  GuardarRecuperacionPendienteInput,
+  RegistrarPeriodoRecuperacionCumplidoInput,
   RegistrarQuedadaCompletaInput,
 } from './mutations';
 export {
   actualizarGrupo,
   actualizarMembresiaPropia,
   actualizarMiembroSinCuenta,
+  activarRecuperacionRacha,
   crearGrupo,
   crearMiembroSinCuenta,
   desbloquearInsigniasRacha,
   editarQuedadaCompleta,
   eliminarGrupo,
   eliminarMembresia,
+  fallarRecuperacionRacha,
+  guardarRecuperacionPendiente,
+  pausarRecuperacionRacha,
+  reanudarRecuperacionRacha,
+  registrarPeriodoRecuperacionCumplido,
   registrarQuedadaCompleta,
 } from './mutations';
 export type { EstadoRachaGrupo, GrupoConMembresia, HistorialQuedadaItem } from './queries';
