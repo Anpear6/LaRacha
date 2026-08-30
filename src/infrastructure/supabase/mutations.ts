@@ -4,6 +4,8 @@ import type { Database, Json } from './database.types';
 
 type RegistrarQuedadaCompletaArgs =
   Database['public']['Functions']['registrar_quedada_completa_mvp']['Args'];
+type EditarQuedadaCompletaArgs =
+  Database['public']['Functions']['editar_quedada_completa_mvp']['Args'];
 type DesbloquearInsigniasRachaArgs =
   Database['public']['Functions']['desbloquear_insignias_racha_mvp']['Args'];
 type CrearGrupoArgs = Database['public']['Functions']['crear_grupo_mvp']['Args'];
@@ -25,6 +27,22 @@ export interface RegistrarQuedadaCompletaInput {
   titulo: string;
   creadaPorMembresiaId: string;
   fecha?: string;
+  conductorMembresiaId?: string;
+  tipoPlanTexto?: string;
+  momentoDia?: MomentoDia;
+  lugarTexto?: string;
+  comidaTexto?: string;
+  duracionMinutos?: number;
+  notas?: string;
+  asistentesMembresiaIds: string[];
+  objetosPerdidosMembresiaIds?: string[];
+  fotos?: FotoNuevaQuedada[];
+}
+
+export interface EditarQuedadaCompletaInput {
+  quedadaId: string;
+  titulo: string;
+  fecha: string;
   conductorMembresiaId?: string;
   tipoPlanTexto?: string;
   momentoDia?: MomentoDia;
@@ -102,6 +120,33 @@ export async function registrarQuedadaCompleta(
   }
 
   return data;
+}
+
+export async function editarQuedadaCompleta(
+  supabase: LaRachaSupabaseClient,
+  input: EditarQuedadaCompletaInput,
+): Promise<void> {
+  const args: EditarQuedadaCompletaArgs = {
+    p_quedada_id: input.quedadaId,
+    p_titulo: input.titulo,
+    p_fecha: input.fecha,
+    p_conductor_membresia_id: input.conductorMembresiaId ?? null,
+    p_tipo_plan_texto: input.tipoPlanTexto ?? null,
+    p_momento_dia: input.momentoDia ?? null,
+    p_lugar_texto: input.lugarTexto ?? null,
+    p_comida_texto: input.comidaTexto ?? null,
+    p_duracion_minutos: input.duracionMinutos ?? null,
+    p_notas: input.notas ?? null,
+    p_asistentes_membresia_ids: input.asistentesMembresiaIds,
+    p_objetos_perdidos_membresia_ids: input.objetosPerdidosMembresiaIds ?? [],
+    p_fotos: normalizarFotos(input.fotos ?? []),
+  };
+
+  const { error } = await supabase.rpc('editar_quedada_completa_mvp', args);
+
+  if (error) {
+    throw new Error(`No se pudo editar la quedada: ${error.message}`);
+  }
 }
 
 export async function crearGrupo(

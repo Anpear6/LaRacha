@@ -580,3 +580,27 @@ Formato recomendado:
 **Solución aplicada:** generar los UUIDs del grupo y de la membresía antes de insertar. Así la función no necesita `returning` en esas inserciones: inserta el grupo, inserta la membresía admin con IDs ya conocidos y devuelve esos IDs al final.
 
 **Estado:** resuelto y validado contra Supabase real tras volver a ejecutar la migración `008`.
+
+## 54. Editar Quedadas Sin Romper Histórico
+
+**Problema:** editar una quedada completa toca varias tablas a la vez: `quedadas`, `opciones_grupo`, `asistencias`, `objetos_perdidos` y `fotos_quedada`.
+
+**Impacto:** si la edición se hiciera con llamadas sueltas desde el frontend, una parte podría guardarse y otra fallar. Eso dejaría una quedada con datos mezclados, por ejemplo fotos nuevas pero asistencias antiguas.
+
+**Decisión actual:** crear la función SQL `editar_quedada_completa_mvp` para ejecutar toda la edición dentro de una sola transacción.
+
+**Detalle:** la función recalcula asistencias y objetos perdidos para membresías activas. Los datos asociados a membresías eliminadas no se borran, porque forman parte del histórico del grupo. Las fotos sí se reemplazan completas, porque en el MVP no tienen histórico propio ni autor.
+
+**Estado:** implementado y validado contra Supabase real.
+
+## 55. Variables SQL Con El Mismo Nombre Que Columnas
+
+**Problema:** al validar la edición de quedadas contra Supabase real, la función falló con `column reference "tipo_plan_opcion_id" is ambiguous`.
+
+**Causa:** dentro de `editar_quedada_completa_mvp` había variables PL/pgSQL llamadas igual que columnas de la tabla `quedadas`. En el `update`, PostgreSQL no podía saber si `tipo_plan_opcion_id` se refería a la columna o a la variable.
+
+**Impacto:** la lógica era correcta, pero la función SQL no podía ejecutarse al editar una quedada.
+
+**Solución aplicada:** renombrar las variables internas con prefijo `v_`: `v_tipo_plan_opcion_id`, `v_lugar_opcion_id` y `v_comida_opcion_id`.
+
+**Estado:** resuelto y validado contra Supabase real tras volver a ejecutar la migración `009`.

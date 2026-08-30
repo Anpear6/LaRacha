@@ -112,9 +112,11 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 - [x] Crear operación para registrar quedadas completas.
 - [x] Ejecutar migración SQL para registrar quedadas completas.
 - [x] Validar registro de quedada completa contra Supabase.
-- [ ] Crear operaciones transaccionales para editar quedadas.
+- [x] Crear operaciones transaccionales para editar quedadas.
+- [x] Ejecutar migración SQL para editar quedadas completas.
+- [x] Validar edición de quedadas completas contra Supabase real.
 - [x] Crear operación transaccional para generar asistencias al registrar quedada.
-- [ ] Crear operaciones para añadir fotos de quedada y objetos perdidos.
+- [x] Crear operaciones para añadir fotos de quedada y objetos perdidos.
 - [x] Crear operaciones para consultar historial de quedadas.
 - [x] Crear operaciones para consultar racha e insignias.
 - [ ] Validar consulta de racha e insignias contra Supabase real.
@@ -217,4 +219,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Crear operaciones transaccionales para editar quedadas completas.
+Crear operaciones de recuperación de racha: guardar recuperación pendiente y activarla cuando el administrador decida recuperar la racha.

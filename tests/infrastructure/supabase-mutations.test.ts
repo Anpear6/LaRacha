@@ -6,6 +6,7 @@ import {
   crearGrupo,
   crearMiembroSinCuenta,
   desbloquearInsigniasRacha,
+  editarQuedadaCompleta,
   eliminarGrupo,
   eliminarMembresia,
   registrarQuedadaCompleta,
@@ -236,6 +237,59 @@ describe('mutaciones de Supabase', () => {
           p_asistentes_membresia_ids: ['membresia-1', 'membresia-2'],
           p_objetos_perdidos_membresia_ids: ['membresia-2'],
           p_fotos: [{ url: 'https://example.com/foto.png', descripcion: 'Foto del plan' }],
+        },
+      },
+    ]);
+  });
+
+  it('llama al RPC de editar quedada completa con los datos normalizados', async () => {
+    const llamadas: unknown[] = [];
+    const supabase = {
+      rpc(nombre: string, args: unknown) {
+        llamadas.push({ nombre, args });
+        return Promise.resolve({ data: undefined, error: null });
+      },
+    } as unknown as LaRachaSupabaseClient;
+
+    await editarQuedadaCompleta(supabase, {
+      quedadaId: 'quedada-1',
+      titulo: 'Plan editado',
+      fecha: '2026-08-30T14:00:00.000Z',
+      conductorMembresiaId: 'membresia-1',
+      tipoPlanTexto: 'Cine',
+      momentoDia: 'tarde_noche',
+      lugarTexto: 'Centro',
+      comidaTexto: 'Palomitas',
+      duracionMinutos: 120,
+      notas: 'Nota editada',
+      asistentesMembresiaIds: ['membresia-1'],
+      objetosPerdidosMembresiaIds: ['membresia-2'],
+      fotos: [
+        { url: 'https://example.com/foto-1.png', descripcion: 'Primera foto' },
+        { url: 'https://example.com/foto-2.png' },
+      ],
+    });
+
+    expect(llamadas).toEqual([
+      {
+        nombre: 'editar_quedada_completa_mvp',
+        args: {
+          p_quedada_id: 'quedada-1',
+          p_titulo: 'Plan editado',
+          p_fecha: '2026-08-30T14:00:00.000Z',
+          p_conductor_membresia_id: 'membresia-1',
+          p_tipo_plan_texto: 'Cine',
+          p_momento_dia: 'tarde_noche',
+          p_lugar_texto: 'Centro',
+          p_comida_texto: 'Palomitas',
+          p_duracion_minutos: 120,
+          p_notas: 'Nota editada',
+          p_asistentes_membresia_ids: ['membresia-1'],
+          p_objetos_perdidos_membresia_ids: ['membresia-2'],
+          p_fotos: [
+            { url: 'https://example.com/foto-1.png', descripcion: 'Primera foto' },
+            { url: 'https://example.com/foto-2.png' },
+          ],
         },
       },
     ]);
