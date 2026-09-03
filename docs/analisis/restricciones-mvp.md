@@ -19,7 +19,11 @@ Sirve como puente entre `modelo-logico-mvp.md` y la migración inicial de Postgr
 
 - `email` será obligatorio y único.
 - `nombre` será obligatorio.
-- `username` será opcional, pero único si existe.
+- `username` será obligatorio y único.
+- El registro debe comprobar si un `username` ya está ocupado antes de avanzar a la siguiente pantalla.
+- `fecha_nacimiento` será obligatoria para usuarios nuevos.
+- La obligatoriedad de `fecha_nacimiento` se aplica con `CHECK NOT VALID` mientras existan usuarios de prueba antiguos sin ese dato.
+- Si se informa `fecha_nacimiento`, no podrá ser futura ni anterior a 1900-01-01.
 - `avatar_global_url` será opcional.
 - Si no hay `avatar_global_url`, la interfaz mostrará una imagen por defecto.
 - Un usuario podrá borrar su propia cuenta si lo desea.

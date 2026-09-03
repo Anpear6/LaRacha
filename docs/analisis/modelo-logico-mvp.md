@@ -24,6 +24,7 @@ Las restricciones cerradas para convertir este modelo a SQL están resumidas en 
 - Las insignias del MVP serán de racha y pertenecerán al grupo.
 - La recuperación de racha entra en el MVP como entidad propia para poder mostrar progreso y calcular estadísticas.
 - Los valores cerrados se validarán con `text + check` en PostgreSQL.
+- Los datos pedidos durante el registro deben quedar protegidos como obligatorios en base de datos para los registros nuevos.
 
 ## Tabla: usuarios
 
@@ -31,8 +32,9 @@ Las restricciones cerradas para convertir este modelo a SQL están resumidas en 
 usuarios
 - id: uuid pk
 - nombre: text not null
-- username: text null unique
+- username: text not null unique
 - email: text not null unique
+- fecha_nacimiento: date not null para registros nuevos
 - avatar_global_url: text null
 - fecha_creacion: timestamptz not null
 - fecha_actualizacion: timestamptz not null
@@ -42,7 +44,11 @@ Notas:
 
 - Más adelante se conectará con Supabase Auth.
 - En el MVP el email será obligatorio y único.
-- `username` será opcional al principio, pero único cuando exista.
+- `username` será obligatorio y único.
+- El registro comprobará disponibilidad de `username` en vivo antes de dejar avanzar.
+- `fecha_nacimiento` será obligatoria para usuarios nuevos.
+- Como ya existen usuarios de prueba creados antes de pedir cumpleaños, la obligatoriedad de `fecha_nacimiento` se aplica primero con una restricción `CHECK NOT VALID`: protege nuevas filas sin romper el histórico existente.
+- No se guarda `edad` porque se queda obsoleta; la edad se calculará cuando haga falta a partir de `fecha_nacimiento`.
 - `avatar_global_url` será texto opcional en el MVP.
 - Un usuario podrá borrar su propia cuenta.
 - El borrado de usuario no debe borrar automáticamente el histórico de grupos, quedadas o asistencias.

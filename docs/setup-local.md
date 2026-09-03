@@ -10,7 +10,7 @@ Desde la carpeta del proyecto:
 npm install
 ```
 
-Esto instala TypeScript, Vitest y el cliente oficial de Supabase.
+Esto instala TypeScript, Vitest, Next.js, React, los tipos de React y el cliente oficial de Supabase.
 
 ## 2. Configurar Variables De Entorno
 
@@ -48,6 +48,9 @@ Orden actual de migraciones:
 8. `supabase/migrations/008_gestion_grupos_membresias.sql`
 9. `supabase/migrations/009_editar_quedada_completa.sql`
 10. `supabase/migrations/010_operaciones_recuperacion_racha.sql`
+11. `supabase/migrations/011_existe_usuario_por_email.sql`
+12. `supabase/migrations/012_usuarios_fecha_nacimiento.sql`
+13. `supabase/migrations/013_registro_obligatorio_y_username_disponible.sql`
 
 Los datos semilla están en:
 
@@ -56,6 +59,18 @@ supabase/seed.sql
 ```
 
 ## 4. Comprobar El Proyecto
+
+Para levantar la app en navegador durante el desarrollo:
+
+```bash
+npm run dev
+```
+
+La app queda disponible normalmente en:
+
+```text
+http://localhost:3000
+```
 
 Para comprobar tipos:
 
@@ -67,6 +82,12 @@ Para ejecutar tests:
 
 ```bash
 npm test
+```
+
+Para comprobar que la app puede construir una version de produccion:
+
+```bash
+npm run build
 ```
 
 Para comprobar que la app puede conectar con Supabase:

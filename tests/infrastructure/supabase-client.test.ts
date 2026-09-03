@@ -4,6 +4,7 @@ import { getSupabaseConfigFromEnv } from '../../src/infrastructure';
 describe('configuracion de Supabase', () => {
   it('lee la URL y la clave anon publica desde variables de entorno', () => {
     const config = getSupabaseConfigFromEnv({
+      NODE_ENV: 'test',
       NEXT_PUBLIC_SUPABASE_URL: 'https://proyecto.supabase.co',
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'clave-publica-suficientemente-larga',
     });
@@ -15,7 +16,7 @@ describe('configuracion de Supabase', () => {
   });
 
   it('falla con un mensaje claro si falta una variable de entorno', () => {
-    expect(() => getSupabaseConfigFromEnv({})).toThrow(
+    expect(() => getSupabaseConfigFromEnv({ NODE_ENV: 'test' })).toThrow(
       'Falta la variable de entorno NEXT_PUBLIC_SUPABASE_URL.',
     );
   });

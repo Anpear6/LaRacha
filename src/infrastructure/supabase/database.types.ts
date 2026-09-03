@@ -7,8 +7,9 @@ export interface Database {
         Row: {
           id: string;
           nombre: string;
-          username: string | null;
+          username: string;
           email: string;
+          fecha_nacimiento: string | null;
           avatar_global_url: string | null;
           fecha_creacion: string;
           fecha_actualizacion: string;
@@ -16,16 +17,18 @@ export interface Database {
         Insert: {
           id?: string;
           nombre: string;
-          username?: string | null;
+          username: string;
           email: string;
+          fecha_nacimiento: string;
           avatar_global_url?: string | null;
           fecha_creacion?: string;
           fecha_actualizacion?: string;
         };
         Update: {
           nombre?: string;
-          username?: string | null;
+          username?: string;
           email?: string;
+          fecha_nacimiento?: string | null;
           avatar_global_url?: string | null;
           fecha_actualizacion?: string;
         };
@@ -325,6 +328,18 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      existe_usuario_por_email_mvp: {
+        Args: {
+          p_email: string;
+        };
+        Returns: boolean;
+      };
+      existe_usuario_por_username_mvp: {
+        Args: {
+          p_username: string;
+        };
+        Returns: boolean;
+      };
       obtener_o_crear_opcion_grupo: {
         Args: {
           p_grupo_id: string;

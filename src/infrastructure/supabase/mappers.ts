@@ -19,12 +19,13 @@ export function mapUsuario(row: Tables['usuarios']['Row']): Usuario {
   const usuario: Usuario = {
     id: row.id,
     nombre: row.nombre,
+    username: row.username,
     email: row.email,
     fechaCreacion: row.fecha_creacion,
     fechaActualizacion: row.fecha_actualizacion,
   };
 
-  asignarSiExiste(usuario, 'username', row.username);
+  asignarSiExiste(usuario, 'fechaNacimiento', row.fecha_nacimiento);
   asignarSiExiste(usuario, 'avatarGlobalUrl', row.avatar_global_url);
 
   return usuario;

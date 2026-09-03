@@ -36,6 +36,7 @@ USUARIO
 - nombre: string
 - username: string
 - email: string
+- fecha_nacimiento: date
 - avatar_global: string
 - fecha_creacion: timestamp
 - fecha_actualizacion: timestamp
@@ -51,7 +52,10 @@ Notas:
 
 - El MVP permitirá usuarios reales desde el principio.
 - `email` será obligatorio y único.
-- `username` será opcional al principio, pero único si existe.
+- `username` será obligatorio y único.
+- Durante el registro se comprobará si el `username` ya existe antes de permitir avanzar.
+- `fecha_nacimiento` será obligatoria para los usuarios creados desde la app, para preparar futuras restricciones o recomendaciones por edad.
+- Se guarda fecha de nacimiento, no edad, porque la edad cambia con el tiempo.
 - Inicialmente existirán dos usuarios reales: la creadora del proyecto y su hermano.
 - Más adelante, una membresía sin cuenta podrá vincularse a un usuario real.
 - Se conectará con Supabase Auth.

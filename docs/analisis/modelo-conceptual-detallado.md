@@ -18,6 +18,7 @@ USUARIO
 - nombre
 - username
 - email
+- fecha_nacimiento
 - avatar_global
 - fecha_creacion
 - fecha_actualizacion
@@ -29,6 +30,7 @@ Relaciones:
 - Un usuario puede seguir usuarios en el futuro.
 - Un usuario puede seguir grupos en el futuro.
 - Un usuario puede ver un salón de la fama personal construido a partir de los grupos donde participa.
+- La fecha de nacimiento permite calcular edad cuando haga falta, sin guardar una edad estática.
 
 ```text
 GRUPO

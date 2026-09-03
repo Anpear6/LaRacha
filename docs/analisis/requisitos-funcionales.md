@@ -20,6 +20,10 @@ Los requisitos funcionales describen qué debe poder hacer el sistema.
 - RF-006C: El sistema debe conservar el histórico de grupos, quedadas y asistencias aunque un usuario borre su cuenta.
 - RF-006D: El sistema debe traspasar el rol admin al miembro activo más antiguo si el admin borra su cuenta.
 - RF-006E: El sistema debe impedir el borrado de cuenta de un admin si no existe otro miembro activo y el grupo no se borra antes.
+- RF-006F: El sistema debe pedir fecha de nacimiento al crear una cuenta para preparar futuras restricciones de edad y recomendaciones por rango de edad.
+- RF-006G: El sistema debe pedir nombre de usuario al crear una cuenta.
+- RF-006H: El sistema debe impedir continuar el registro si el nombre de usuario ya está en uso.
+- RF-006I: El sistema debe mostrar en vivo si el nombre de usuario está disponible mientras se escribe.
 
 ### Gestión De Membresías
 

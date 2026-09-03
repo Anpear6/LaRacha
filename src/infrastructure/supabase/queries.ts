@@ -61,10 +61,14 @@ export async function obtenerUsuarioActual(
     return null;
   }
 
-  const { data, error } = await supabase.from('usuarios').select('*').eq('id', user.id).single();
+  const { data, error } = await supabase.from('usuarios').select('*').eq('id', user.id).maybeSingle();
 
   if (error) {
     throw new Error(`No se pudo leer el usuario actual: ${error.message}`);
+  }
+
+  if (!data) {
+    return null;
   }
 
   return mapUsuario(data);
