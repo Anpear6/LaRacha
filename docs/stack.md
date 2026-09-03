@@ -6,7 +6,7 @@ El stack elegido para La Racha será:
 
 - **Lenguaje principal:** TypeScript.
 - **Frontend:** React con Next.js.
-- **Estilos:** Tailwind CSS.
+- **Estilos:** CSS global inicial, con posibilidad de incorporar Tailwind CSS más adelante.
 - **Backend:** Supabase.
 - **Base de datos:** PostgreSQL.
 - **Autenticación:** Supabase Auth.
@@ -47,9 +47,11 @@ En el código, la conexión se hará con el cliente oficial `@supabase/supabase-
 
 La capa de acceso a datos traducirá las filas de Supabase al modelo de dominio mediante mapeadores. Así la lógica de negocio trabaja con nombres TypeScript (`grupoId`) y no con nombres de tabla (`grupo_id`).
 
-### Tailwind CSS
+### Estilos
 
-Tailwind permite crear una interfaz cuidada sin dedicar demasiado tiempo a organizar CSS desde cero. También se usa bastante en proyectos modernos con React y Next.js.
+La primera interfaz usa CSS global porque la identidad visual de La Racha todavía se está definiendo con bocetos, logo propio, vídeo de intro y una paleta muy personalizada. Esto permite iterar rápido sin pelearse con una capa de estilos extra.
+
+Tailwind CSS sigue siendo una opción posible más adelante si la interfaz crece y aparecen muchos patrones repetidos. De momento se prioriza una base sencilla y fácil de entender.
 
 ### Vitest Y Playwright
 

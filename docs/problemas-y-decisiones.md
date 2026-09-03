@@ -628,3 +628,175 @@ Formato recomendado:
 **Detalle:** no hace falta una migración nueva porque la función SQL ya existe desde `006_registrar_quedada_completa.sql`. La operación devuelve el ID existente si la opción ya estaba creada, evitando duplicados por diferencias de mayúsculas/minúsculas.
 
 **Estado:** implementado y validado contra Supabase real con `npm run check:opciones-grupo`.
+
+## 58. Flujo De Trabajo Creativo Para Frontend
+
+**Problema:** el frontend tiene una parte más visual y creativa que la lógica de dominio o la base de datos. Tomar todas las decisiones de diseño de golpe puede bloquear el avance o provocar muchos cambios posteriores.
+
+**Impacto:** si se construyen muchas pantallas sin validar la distribución visual, es fácil tener que rehacerlas. Si se espera a tener el diseño perfecto, el MVP vuelve a frenarse.
+
+**Decisión actual:** trabajar pantalla a pantalla. Para cada pantalla, primero se define qué debe hacer y qué datos necesita. Después la usuaria puede dibujar una propuesta sencilla de distribución. Se implementa una primera versión funcional y se refina por iteraciones.
+
+**Estado:** decidido para la fase frontend.
+
+## 59. Primera Pantalla De Acceso
+
+**Problema:** la app necesitaba una entrada visual coherente con la marca y conectada con Supabase Auth, pero sin diseñar todavía toda la aplicación.
+
+**Decisión actual:** crear una pantalla inicial en Next.js que, cuando no hay sesión, muestra la animación de intro, permite elegir entre entrar o crear cuenta y separa email, nombre, username y contraseña en pasos distintos. Los campos usan cajas ovaladas porque encajan con la dirección visual elegida.
+
+**Detalle:** los assets de marca usados por la app se han copiado a `public/brand`. Esta carpeta sí se sirve desde Next.js; los recursos de `docs/recursos` quedan como material documental o de inspiración.
+
+**Estado:** implementado como primera versión.
+
+## 60. CSS Global En Lugar De Tailwind Al Inicio
+
+**Problema:** el stack inicial mencionaba Tailwind CSS, pero la primera pantalla necesitaba una estética muy personalizada basada en los recursos visuales de La Racha.
+
+**Impacto:** incorporar Tailwind desde el primer momento podía añadir una capa más que aprender justo cuando el objetivo era validar el flujo de acceso y empezar a ver algo en pantalla.
+
+**Decisión actual:** usar CSS global para el arranque del frontend. Si más adelante la interfaz crece y conviene sistematizar componentes, se podrá incorporar Tailwind CSS o una estructura de estilos más modular.
+
+**Estado:** decidido por ahora.
+
+## 61. Tipos De React Y Caché De TypeScript
+
+**Problema:** al añadir Next.js, `npm run typecheck` falló porque faltaban los tipos de React y TypeScript generó un archivo local de caché.
+
+**Impacto:** sin `@types/react` y `@types/react-dom`, TypeScript no entiende JSX correctamente. El archivo `tsconfig.tsbuildinfo` no debe subirse a Git porque es caché de compilación local.
+
+**Solución aplicada:** instalar los tipos de React como dependencias de desarrollo y añadir `*.tsbuildinfo` al `.gitignore`.
+
+**Estado:** resuelto.
+
+## 62. Pulido De La Pantalla De Acceso
+
+**Problema:** la primera versión funcional de la pantalla de acceso mezclaba el vídeo de intro con el botón de continuar y repetía el banner de La Racha en las pantallas de email y contraseña.
+
+**Impacto:** el flujo visual no coincidía con la idea deseada: primero una intro a pantalla completa, después una pantalla tranquila con el logo y el botón, y luego formularios más limpios.
+
+**Decisión actual:** la animación de intro se reproduce una sola vez a pantalla completa. Cuando termina, aparece la pantalla de continuar con el logo. Las pantallas de email, nombre, usuario y contraseña ya no muestran el banner superior; colocan el título y el formulario en la parte alta. La flecha de volver queda arriba a la izquierda.
+
+**Detalle visual:** se mantiene la tipografía, los iconos y las sombras tipo cartoon de los inputs. El botón secundario de crear cuenta pasa a un naranja suave para encajar mejor con la identidad de La Racha.
+
+**Ajuste posterior:** se sustituyeron el banner y el logo miniatura por versiones con fondo transparente en `public/brand/logo-completo-transparente.png` y `public/brand/logo-rayo-transparente.png`. Así el logo deja de depender del color de fondo de la imagen original.
+
+**Ajuste de ritmo:** el slogan se muestra solo en la pantalla posterior a la intro, no en los formularios de email, usuario o contraseña. El vídeo inicial se reproduce ligeramente más lento para que la transición resulte menos brusca.
+
+**Simplificación posterior:** se eliminó la pantalla intermedia de `Continuar`. Al terminar el vídeo, la app muestra directamente el banner, el slogan y los botones `Entrar` y `Crear cuenta`, ahorrando un paso que no aportaba valor.
+
+**Estado:** implementado.
+
+## 63. Ajustes CSS Que No Se Ven
+
+**Problema:** al ajustar manualmente la pantalla de continuar, algunos cambios no se reflejaban en la app.
+
+**Causa:** se estaban usando valores negativos en propiedades CSS que no los aceptan, como `padding-bottom: -40px` y `gap: -10px`. El navegador ignora esas reglas inválidas.
+
+**Solución aplicada:** para bajar el botón se usan valores positivos en `gap` y `padding-bottom`. Para subir el slogan respecto al banner se usa `margin-top` negativo en `.continue-brand p`, que sí es válido.
+
+**Estado:** resuelto.
+
+## 64. Diseño Móvil Primero Y Zona De Pulgar
+
+**Problema:** la app está pensada principalmente para móvil, pero algunos botones quedaban demasiado centrados o altos para pulsarlos cómodamente con una mano.
+
+**Impacto:** aunque la pantalla se viera bien, usarla en teléfono podía sentirse menos natural. En una app que debe ser rápida y ligera de registrar, los botones principales tienen que estar cerca de la zona cómoda del pulgar.
+
+**Decisión actual:** diseñar las pantallas del MVP con enfoque móvil primero. En la pantalla de acceso, el banner y slogan quedan en el centro visual y los botones principales bajan hacia la parte inferior. En pantallas de formulario, el contenido principal queda arriba y el botón de acción se coloca abajo.
+
+**Estado:** implementado como criterio de interfaz.
+
+## 65. Animación De Botones En Móvil
+
+**Problema:** los botones tenían una animación al pasar el ratón por encima (`hover`), pero La Racha está pensada principalmente para móvil.
+
+**Impacto:** en móvil el `hover` no representa una interacción real y puede hacer que la interfaz se sienta menos natural. El efecto cartoon de hundirse tiene más sentido cuando se pulsa el botón.
+
+**Decisión actual:** quitar la animación `hover` de los botones principales y usar solo `:active`. Al tocar o pulsar, el botón baja unos píxeles y la sombra se reduce, dando sensación de botón físico.
+
+**Estado:** implementado.
+
+## 66. Transición Entre Intro Y Acceso
+
+**Problema:** el paso del vídeo inicial a la pantalla de acceso se veía demasiado brusco.
+
+**Impacto:** aunque el flujo funcionaba, el corte visual hacía que la entrada a la app se sintiera menos cuidada.
+
+**Intento descartado:** se probó un crossfade rápido entre el vídeo y la pantalla de acceso. Primero aparecía una pantalla negra, y al cambiarlo a crema seguía notándose raro.
+
+**Decisión actual:** volver a un corte directo más sincronizado, pero suavizar la llegada de la pantalla de acceso. El banner y el slogan aparecen con un fade breve, y los botones `Entrar` y `Crear cuenta` mantienen una animación corta desde abajo.
+
+**Estado:** implementado.
+
+## 67. Progreso Y Deslizamiento En Formularios De Acceso
+
+**Problema:** el flujo de email, nombre, usuario y contraseña podía sentirse como pantallas sueltas sin indicación clara de avance.
+
+**Impacto:** en móvil, un proceso por pasos necesita orientar a la persona sin cargar la pantalla de texto. Si no se ve cuánto queda, el registro puede parecer más largo de lo que es.
+
+**Decisión actual:** añadir una barra de progreso naranja en las pantallas de formulario. La flecha de volver y la barra se mantienen fijas arriba. El contenido de cada paso entra con una animación horizontal: desde la derecha al avanzar y desde la izquierda al retroceder.
+
+**Estado:** implementado.
+
+## 68. Botones De Formulario Cerca Del Campo En Móvil
+
+**Problema:** colocar el botón de continuar al fondo de la pantalla puede ser incómodo en móvil cuando el teclado está abierto.
+
+**Impacto:** la persona tendría que terminar de escribir, cerrar el teclado y buscar el botón, añadiendo fricción a un flujo que debería ser rápido.
+
+**Decisión actual:** en formularios de un solo campo, el botón de continuar se coloca justo debajo de la cajita rellenable. Así queda asociado a la acción que se está realizando y es más fácil continuar después de escribir.
+
+**Estado:** implementado para el flujo de acceso.
+
+## 69. Email Ya Registrado En Crear Cuenta
+
+**Problema:** al pulsar `Crear cuenta` y escribir un email que ya existía, la app dejaba avanzar al siguiente paso porque la pantalla de email solo validaba que hubiera un email escrito.
+
+**Impacto:** podía parecer que la app estaba aceptando crear una cuenta duplicada, aunque el error real aparece cuando se intenta registrar contra Supabase.
+
+**Decisión actual:** para el MVP privado se comprobará el email antes de avanzar en el flujo de crear cuenta. La comprobación no devuelve datos del usuario, solo `true` o `false`.
+
+**Ajuste posterior:** Supabase puede responder a `signUp` con un usuario obfuscado cuando el email ya está registrado, en vez de devolver un error directo. Para detectar ese caso, el frontend revisa si `data.user.identities` viene vacío y muestra el mensaje de email ya registrado.
+
+**Segundo ajuste:** en la prueba real, Supabase seguía permitiendo avanzar porque no siempre daba una señal suficiente desde `signUp`. Para el MVP se creó la función SQL `existe_usuario_por_email_mvp`, que devuelve solo `true` o `false` y permite bloquear el avance en `Crear cuenta` si el email ya existe en `usuarios`.
+
+**Estado:** implementado en el flujo de acceso.
+
+## 70. Fecha De Nacimiento En Registro
+
+**Problema:** en el futuro puede ser necesario aplicar restricciones por edad o recomendar grupos de amigos de rangos de edad similares.
+
+**Impacto:** si no se recoge ningún dato de edad al crear la cuenta, añadir esas funciones más adelante obligaría a pedir información adicional a usuarios ya registrados.
+
+**Decisión actual:** pedir fecha de nacimiento durante el registro. No se guarda `edad` porque cambia con el tiempo; se guarda `fecha_nacimiento` y la edad se calculará cuando haga falta.
+
+**Detalle MVP:** la columna será opcional en base de datos para no romper usuarios ya existentes, pero el formulario de registro la pide a los nuevos usuarios. La base de datos rechaza fechas futuras o anteriores a 1900-01-01.
+
+**Ajuste posterior:** como la app ya pide la fecha de nacimiento durante el registro, la base de datos también debe proteger ese dato para registros nuevos. Para no romper usuarios de prueba antiguos sin cumpleaños, se añade una restricción `CHECK NOT VALID`: se aplica a nuevas filas y queda pendiente validar toda la tabla cuando los perfiles antiguos tengan fecha.
+
+**Estado:** implementado en código y pendiente de ejecutar las migraciones `012` y `013` en Supabase si aún no se han ejecutado.
+
+## 71. Username Disponible Antes De Continuar
+
+**Problema:** el registro pedía nombre de usuario, pero si el username ya existía la persona podía avanzar hasta el final y descubrir el problema demasiado tarde.
+
+**Impacto:** la experiencia se sentía confusa, especialmente porque La Racha usa pantallas cortas y móviles. Si el dato ya está ocupado, la app debe decirlo en el momento exacto en que se escribe.
+
+**Decisión actual:** añadir una comprobación en vivo durante el paso `Tu usuario`. Mientras la persona escribe, la app espera un momento y consulta `existe_usuario_por_username_mvp`. Si está libre muestra un check; si está ocupado muestra una equis y el mensaje: "Alto ahi. Ese ya esta cogido. Prueba con otro."
+
+**Detalle técnico:** `username` pasa a ser obligatorio y único en la base de datos. La comprobación de disponibilidad se hace con una función SQL que devuelve solo booleano, sin exponer perfiles ni datos internos.
+
+**Estado:** implementado en frontend y preparado en la migración `013_registro_obligatorio_y_username_disponible.sql`.
+
+## 72. Cuenta Confirmada Sin Perfil En Usuarios
+
+**Problema:** Supabase Auth puede enviar un correo de confirmación al crear una cuenta. Si el usuario confirma el email y vuelve a entrar, puede existir sesión de Auth, pero no existir todavía una fila correspondiente en la tabla `usuarios`.
+
+**Impacto:** la app intentaba leer el perfil con una consulta que esperaba exactamente una fila. Cuando no encontraba ninguna, Next.js mostraba un error: `Cannot coerce the result to a single JSON object`.
+
+**Causa:** Supabase Auth y la tabla `usuarios` son dos capas distintas. Auth sabe que la cuenta existe, pero La Racha necesita además su perfil propio: nombre, username, email y fecha de nacimiento.
+
+**Solución aplicada:** cambiar la lectura de usuario actual para permitir que no exista perfil. Si hay sesión de Auth pero no hay fila en `usuarios`, la app ya no rompe: entra en un flujo de completar perfil y pide los datos necesarios para crear esa fila.
+
+**Estado:** implementado en el frontend.

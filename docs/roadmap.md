@@ -134,8 +134,8 @@ Objetivo: conectar la lógica con Supabase y preparar operaciones reales.
 
 Objetivo: construir la primera interfaz usable sobre el backend y la lógica ya definidos.
 
-- [ ] Crear estructura Next.js.
-- [ ] Crear pantalla de login.
+- [x] Crear estructura Next.js.
+- [x] Crear pantalla inicial de acceso con intro, login y registro por pasos.
 - [ ] Crear selector o inicio de grupo.
 - [ ] Crear pantalla principal del grupo.
 - [ ] Crear lista de membresías del grupo.
@@ -223,4 +223,4 @@ Objetivo: añadir funciones sociales sin romper la privacidad del producto.
 
 ## Siguiente Paso Recomendado
 
-Revisar y preparar el salto al frontend MVP.
+Diseñar el flujo visual del selector/inicio de grupo para usuarios autenticados.

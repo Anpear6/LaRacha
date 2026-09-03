@@ -19,6 +19,7 @@ Relaciones:
 - Puede pertenecer a varios grupos mediante membresías.
 - En el futuro puede seguir usuarios.
 - En el futuro puede seguir grupos.
+- Puede tener fecha de nacimiento para futuras restricciones o recomendaciones por edad.
 
 ### Grupo
 

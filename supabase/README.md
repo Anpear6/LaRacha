@@ -14,6 +14,9 @@ Esta carpeta contiene la parte de base de datos de La Racha.
 - `migrations/008_gestion_grupos_membresias.sql`: crea funciones transaccionales para crear, editar y borrar grupos, y para gestionar membresias.
 - `migrations/009_editar_quedada_completa.sql`: crea una funcion transaccional para editar una quedada completa.
 - `migrations/010_operaciones_recuperacion_racha.sql`: crea funciones para guardar, activar, pausar, reanudar, avanzar y fallar recuperaciones de racha.
+- `migrations/011_existe_usuario_por_email.sql`: crea una funcion para comprobar si un email ya existe durante el registro.
+- `migrations/012_usuarios_fecha_nacimiento.sql`: añade fecha de nacimiento al perfil de usuario.
+- `migrations/013_registro_obligatorio_y_username_disponible.sql`: hace obligatorio el username, exige fecha de nacimiento para usuarios nuevos y crea una funcion para comprobar disponibilidad de username.
 
 ## Datos Semilla
 
